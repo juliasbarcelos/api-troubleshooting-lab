@@ -4,9 +4,9 @@
 
 Este projeto apresenta um laboratório prático de testes e investigação de incidentes em APIs REST, desenvolvido com foco nas atividades de Suporte Aplicacional Júnior.
 
-O laboratório combina testes HTTP utilizando o Postman, o desenvolvimento de uma API REST em Python com FastAPI e a utilização de uma base de dados MySQL.
+O laboratório combina testes HTTP utilizando o Postman, o desenvolvimento de uma API REST em Python com FastAPI e a utilização de uma base de dados relacional MySQL.
 
-O objetivo é desenvolver competências de diagnóstico técnico, interpretação de respostas HTTP, análise de erros, consultas SQL e documentação de incidentes aplicacionais.
+O objetivo é desenvolver competências de diagnóstico técnico, interpretação de respostas HTTP, análise de erros, consultas SQL, identificação de causas e documentação de incidentes aplicacionais.
 
 O projeto utiliza um cenário fictício de comércio eletrónico, permitindo reproduzir e investigar falhas de forma controlada.
 
@@ -131,13 +131,61 @@ A estrutura da tabela inclui:
 
 ### Implementação
 
-A base de dados e a tabela foram criadas e validadas através do MySQL Workbench.
+A base de dados `api_troubleshooting_lab` e a tabela `pedidos` foram criadas e validadas através do MySQL Workbench.
 
-**Script SQL:** [01_criar_estrutura.sql](database/01_criar_estrutura.sql)
+Foram inseridos cinco pedidos fictícios, com diferentes produtos, quantidades e estados.
 
-**Evidência:** [Criação da tabela pedidos](Evidencias/MYSQL_CRIACAO_TABELA_PEDIDOS.png)
+A consulta SQL confirmou que os cinco registos foram armazenados corretamente, com identificadores automáticos e datas de criação.
 
-A inserção dos dados fictícios e a integração com a API serão realizadas nas próximas etapas.
+### Dados de Teste Inseridos
+
+| ID | Cliente | Produto | Quantidade | Estado |
+|---|---|---|---|---|
+| 1 | Cliente Teste | Notebook | 1 | pendente |
+| 2 | Maria Silva | Monitor | 2 | enviado |
+| 3 | Joao Santos | Teclado | 3 | entregue |
+| 4 | Ana Costa | Rato Wireless | 1 | pendente |
+| 5 | Pedro Almeida | Impressora | 1 | cancelado |
+
+Todos os registos são fictícios e utilizados exclusivamente para simulação de operações e incidentes.
+
+### Validação SQL
+
+Após a inserção, foi executada uma consulta para verificar os registos armazenados:
+
+```sql
+USE api_troubleshooting_lab;
+
+SELECT
+    id,
+    cliente,
+    produto,
+    quantidade,
+    estado,
+    data_criacao
+FROM pedidos
+ORDER BY id;
+```
+
+**Resultado:** Foram devolvidos os cinco pedidos esperados, sem erros na execução.
+
+### Scripts SQL
+
+- [01_criar_estrutura.sql](database/01_criar_estrutura.sql) — criação da base de dados e da tabela.
+- [02_inserir_dados.sql](database/02_inserir_dados.sql) — inserção e consulta dos pedidos fictícios.
+
+**Nota:** o script de inserção deve ser executado apenas uma vez numa base inicialmente vazia, pois uma nova execução poderá criar registos duplicados.
+
+### Evidências
+
+- [Criação da tabela pedidos](Evidencias/MYSQL_CRIACAO_TABELA_PEDIDOS.png)
+- [Inserção dos cinco pedidos](Evidencias/MYSQL_INSERCAO_PEDIDOS.png)
+
+### Resultado
+
+**Estado:** Concluído — estrutura criada e cinco pedidos fictícios inseridos e validados.
+
+A integração entre FastAPI e MySQL ainda será implementada.
 
 ---
 
@@ -230,7 +278,7 @@ Cada investigação incluirá:
 3. Reprodução da falha.
 4. Análise de respostas HTTP e logs.
 5. Identificação da causa.
-6. Aplicação de correção.
+6. Aplicação da correção.
 7. Validação através de novos testes.
 8. Registo de evidências e conclusão técnica.
 
@@ -248,12 +296,14 @@ api-troubleshooting-lab/
 |
 |-- database/
 |   |-- 01_criar_estrutura.sql
+|   |-- 02_inserir_dados.sql
 |
 |-- Evidencias/
 |   |-- GET_200_OK.png
 |   |-- POST_200_OK.png
 |   |-- GET_HEALTH_200_OK.png
 |   |-- MYSQL_CRIACAO_TABELA_PEDIDOS.png
+|   |-- MYSQL_INSERCAO_PEDIDOS.png
 |
 |-- Relatorios/
 |   |-- TESTE-GET-001.md
@@ -265,7 +315,7 @@ api-troubleshooting-lab/
 |-- README.md
 ```
 
-A estrutura será ampliada à medida que forem implementadas novas funcionalidades e investigações.
+A estrutura será ampliada à medida que forem implementadas novas funcionalidades, testes e investigações.
 
 ---
 
@@ -280,7 +330,7 @@ A estrutura será ampliada à medida que forem implementadas novas funcionalidad
 
 ### Instalação das Dependências
 
-Criar e ativar um ambiente virtual Python.
+Criar e ativar um ambiente virtual Python:
 
 ```powershell
 python -m venv .venv
@@ -292,6 +342,15 @@ Instalar as bibliotecas:
 ```powershell
 python -m pip install -r requirements.txt
 ```
+
+### Preparar a Base de Dados
+
+No MySQL Workbench:
+
+1. Estabelecer ligação ao servidor MySQL.
+2. Executar `database/01_criar_estrutura.sql`.
+3. Numa base inicialmente vazia, executar `database/02_inserir_dados.sql`.
+4. Confirmar a existência dos cinco pedidos fictícios.
 
 ### Executar a API
 
@@ -311,7 +370,7 @@ Documentação interativa automática:
 
 O servidor pode ser interrompido com `Ctrl + C`.
 
-**Nota:** a ligação entre a API e o MySQL ainda não foi implementada nesta versão.
+**Nota:** nesta versão, a base de dados e a API funcionam separadamente. A ligação entre FastAPI e MySQL será implementada na próxima etapa.
 
 ---
 
@@ -323,23 +382,27 @@ O servidor pode ser interrompido com `Ctrl + C`.
 - [x] Teste HTTP GET numa API pública.
 - [x] Teste HTTP POST com dados JSON.
 - [x] Criação da API Python com FastAPI.
-- [x] Configuração do ambiente virtual.
+- [x] Configuração do ambiente virtual Python.
 - [x] Instalação das dependências.
 - [x] Implementação do endpoint GET `/health`.
 - [x] Validação do Health Check no Postman.
 - [x] Criação da base de dados MySQL.
 - [x] Criação da tabela `pedidos`.
-- [x] Publicação do script SQL e da evidência.
-- [x] Documentação dos primeiros testes.
+- [x] Implementação de restrições de integridade.
+- [x] Inserção de cinco pedidos fictícios no MySQL.
+- [x] Validação dos registos através de consulta SQL.
+- [x] Publicação dos scripts de criação e inserção.
+- [x] Publicação das evidências técnicas.
+- [x] Documentação dos três primeiros testes HTTP.
 
 ### Próximas Etapas
 
-- [ ] Inserir pedidos fictícios na base MySQL.
-- [ ] Executar consultas SQL de validação.
 - [ ] Integrar FastAPI com MySQL.
+- [ ] Configurar a ligação à base de dados de forma segura.
 - [ ] Implementar GET `/pedidos`.
 - [ ] Implementar GET `/pedidos/{id}`.
 - [ ] Implementar POST `/pedidos`.
+- [ ] Validar a persistência de dados através da API.
 - [ ] Criar testes automáticos no Postman.
 - [ ] Simular e investigar incidentes HTTP.
 - [ ] Documentar causas, correções e validações.
@@ -357,6 +420,8 @@ O servidor pode ser interrompido com `Ctrl + C`.
 - Utilização do framework FastAPI.
 - Administração básica de bases de dados MySQL.
 - Criação de tabelas e restrições SQL.
+- Inserção e consulta de dados relacionais.
+- Verificação da integridade dos dados.
 - Análise de resultados técnicos.
 - Documentação de testes e evidências.
 - Organização de projetos utilizando GitHub.
