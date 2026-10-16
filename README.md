@@ -23,6 +23,7 @@ O projeto utiliza um cenário fictício de comércio eletrónico, permitindo rep
 - Integrar endpoints HTTP com consultas SQL.
 - Diagnosticar falhas de autenticação e ligação à base de dados.
 - Aplicar o princípio do menor privilégio.
+- Validar consultas de recursos existentes e inexistentes.
 - Simular e investigar erros HTTP 400, 401, 403, 404 e 500.
 - Analisar logs e identificar causas de falhas.
 - Validar correções através de novos testes.
@@ -50,37 +51,35 @@ O projeto utiliza um cenário fictício de comércio eletrónico, permitindo rep
 
 ## Cenário do Laboratório
 
-O laboratório simula uma aplicação de comércio eletrónico que utiliza uma API REST para consultar e registar pedidos fictícios de clientes.
+O laboratório simula uma aplicação de comércio eletrónico que utiliza uma API REST para consultar pedidos fictícios de clientes.
 
 A arquitetura é composta por três componentes principais:
 
 1. **Postman:** envia requisições HTTP, analisa respostas e organiza testes.
 2. **FastAPI:** recebe as requisições e executa a lógica da aplicação.
-3. **MySQL:** armazena os pedidos e permite a consulta dos dados através de SQL.
+3. **MySQL:** armazena os pedidos e permite consultar os dados através de SQL.
 
 ### Fluxo de Comunicação
 
-```text
-Postman
-   |
-   | Requisição HTTP
-   v
-FastAPI (Python)
-   |
-   | Consulta SQL
-   v
-MySQL
-   |
-   | Dados dos pedidos
-   v
-FastAPI
-   |
-   | Resposta HTTP / JSON
-   v
-Postman
-```
+    Postman
+       |
+       | Requisição HTTP
+       v
+    FastAPI (Python)
+       |
+       | Consulta SQL
+       v
+    MySQL
+       |
+       | Dados dos pedidos
+       v
+    FastAPI
+       |
+       | Resposta HTTP / JSON
+       v
+    Postman
 
-A integração foi validada através do endpoint `GET /pedidos`, que consulta os cinco pedidos armazenados no MySQL.
+A integração foi validada através dos endpoints `GET /pedidos` e `GET /pedidos/{pedido_id}`.
 
 ---
 
@@ -94,10 +93,13 @@ Foi desenvolvida uma API REST em Python utilizando FastAPI e o servidor Uvicorn.
 - Configuração do servidor local Uvicorn.
 - Implementação do endpoint GET `/health`.
 - Implementação do endpoint GET `/pedidos`.
+- Implementação do endpoint GET `/pedidos/{pedido_id}`.
 - Respostas estruturadas em JSON.
 - Ligação à base de dados MySQL.
-- Consulta SQL através da aplicação Python.
-- Tratamento básico de falhas de acesso à base de dados.
+- Consultas SQL através da aplicação Python.
+- Utilização de consultas SQL parametrizadas.
+- Tratamento de pedidos inexistentes com HTTP 404.
+- Tratamento básico de erros de acesso à base de dados com HTTP 503.
 - Testes de comunicação HTTP através do Postman.
 
 ### Endpoints Disponíveis
@@ -105,7 +107,8 @@ Foi desenvolvida uma API REST em Python utilizando FastAPI e o servidor Uvicorn.
 | Método | Endpoint | Descrição | Estado |
 |---|---|---|---|
 | GET | `/health` | Verificação básica da API | Implementado |
-| GET | `/pedidos` | Consulta dos pedidos armazenados no MySQL | Implementado |
+| GET | `/pedidos` | Consulta de todos os pedidos armazenados no MySQL | Implementado |
+| GET | `/pedidos/{pedido_id}` | Consulta de um pedido específico por identificador | Implementado |
 
 ### Endpoint GET /health
 
@@ -113,12 +116,10 @@ Foi desenvolvida uma API REST em Python utilizando FastAPI e o servidor Uvicorn.
 
 **Resposta esperada:**
 
-```json
-{
-  "status": "ok",
-  "message": "API em funcionamento"
-}
-```
+    {
+      "status": "ok",
+      "message": "API em funcionamento"
+    }
 
 O endpoint permite verificar se a aplicação está a responder a requisições HTTP.
 
@@ -132,23 +133,63 @@ Este endpoint estabelece uma ligação ao MySQL e executa uma consulta SQL à ta
 
 A consulta utilizada é:
 
-```sql
-SELECT
-    id,
-    cliente,
-    produto,
-    quantidade,
-    estado,
-    data_criacao
-FROM pedidos
-ORDER BY id;
-```
+    SELECT
+        id,
+        cliente,
+        produto,
+        quantidade,
+        estado,
+        data_criacao
+    FROM pedidos
+    ORDER BY id;
 
 Os registos encontrados são devolvidos em formato JSON.
 
 O endpoint inclui tratamento básico de erros do conector MySQL, devolvendo HTTP 503 caso seja detetada uma falha de acesso à base de dados.
 
-A classificação das diferentes falhas será aperfeiçoada nas próximas etapas do laboratório.
+### Endpoint GET /pedidos/{pedido_id}
+
+**Exemplo:** `http://127.0.0.1:8000/pedidos/2`
+
+Este endpoint permite consultar um pedido específico através do seu identificador.
+
+A aplicação recebe o parâmetro `pedido_id` e executa uma consulta SQL parametrizada.
+
+Consulta utilizada:
+
+    SELECT
+        id,
+        cliente,
+        produto,
+        quantidade,
+        estado,
+        data_criacao
+    FROM pedidos
+    WHERE id = %s;
+
+O resultado é obtido através do método `fetchone()`.
+
+#### Pedido Existente
+
+Quando o identificador corresponde a um registo existente, a API devolve HTTP 200 OK e os dados do pedido em formato JSON.
+
+O teste com o ID 2 devolveu o pedido de Maria Silva, produto Monitor, quantidade 2 e estado enviado.
+
+#### Pedido Inexistente
+
+Quando o identificador não corresponde a um registo, a API devolve HTTP 404 Not Found.
+
+**Exemplo:** `GET /pedidos/999`
+
+Resposta:
+
+    {
+      "detail": "Pedido não encontrado"
+    }
+
+Este comportamento foi validado no Postman.
+
+As consultas SQL parametrizadas ajudam a prevenir ataques de SQL Injection.
 
 **Código-fonte:** [api/main.py](api/main.py)
 
@@ -177,11 +218,9 @@ Foi criado um utilizador MySQL específico para a aplicação:
 
 Foram atribuídas permissões limitadas à base de dados do laboratório:
 
-```sql
-GRANT SELECT, INSERT, UPDATE
-ON api_troubleshooting_lab.*
-TO 'api_suporte'@'localhost';
-```
+    GRANT SELECT, INSERT, UPDATE
+    ON api_troubleshooting_lab.*
+    TO 'api_suporte'@'localhost';
 
 Esta configuração permite executar operações autorizadas sem utilizar permanentemente a conta administrativa `root`.
 
@@ -191,20 +230,16 @@ As credenciais são guardadas no ficheiro `.env`, mantido fora do repositório p
 
 Foi executado o comando:
 
-```powershell
-python -m api.testar_ligacao
-```
+    python -m api.testar_ligacao
 
 **Resultado obtido:**
 
-```text
-Ligação ao MySQL estabelecida com sucesso.
-Total de pedidos encontrados: 5
-```
+    Ligação ao MySQL estabelecida com sucesso.
+    Total de pedidos encontrados: 5
 
 A consulta confirmou que o Python conseguiu autenticar-se no servidor MySQL e consultar os registos armazenados.
 
-Posteriormente, a ligação também foi validada através do endpoint HTTP GET `/pedidos`.
+Posteriormente, a ligação também foi validada através dos endpoints HTTP `GET /pedidos` e `GET /pedidos/{pedido_id}`.
 
 **Estado:** Integração funcional e validada.
 
@@ -255,7 +290,7 @@ Foram inseridos cinco pedidos fictícios:
 | 4 | Ana Costa | Rato Wireless | 1 | pendente |
 | 5 | Pedro Almeida | Impressora | 1 | cancelado |
 
-Os registos foram validados através de consultas SQL no MySQL Workbench e, posteriormente, através da API FastAPI.
+Os registos foram validados através de consultas SQL no MySQL Workbench e através da API FastAPI.
 
 ### Scripts SQL
 
@@ -338,14 +373,56 @@ O teste confirmou o funcionamento da comunicação entre Postman, FastAPI e MySQ
 
 A API executou uma consulta SQL à tabela `pedidos` e devolveu os cinco registos fictícios em formato JSON.
 
-Os dados foram comparados com os registos existentes na base de dados.
-
 **Relatório:** [TESTE-GET-004.md](Relatorios/TESTE-GET-004.md)
 
 **Evidências:**
 
 - [GET_PEDIDOS_MYSQL_200_OK_01.png](Evidencias/GET_PEDIDOS_MYSQL_200_OK_01.png)
 - [GET_PEDIDOS_MYSQL_200_OK_02.png](Evidencias/GET_PEDIDOS_MYSQL_200_OK_02.png)
+
+### TESTE-GET-005 — Consulta de Pedido por ID
+
+- **Ferramenta:** Postman
+- **Método:** GET
+- **Endpoint:** `http://127.0.0.1:8000/pedidos/2`
+- **Base de dados:** MySQL
+- **Resultado:** HTTP 200 OK
+- **Tempo de resposta:** 109 ms
+- **Tamanho da resposta:** 251 B
+- **Pedido devolvido:** ID 2 — Maria Silva
+- **Estado:** Aprovado
+
+O teste confirmou que a API consegue consultar um pedido específico através do identificador fornecido na URL.
+
+Foi utilizada uma consulta SQL parametrizada para recuperar o registo de ID 2.
+
+A resposta JSON devolveu os dados correspondentes ao pedido existente no MySQL.
+
+**Relatório:** [TESTE-GET-005.md](Relatorios/TESTE-GET-005.md)
+
+**Evidência:** [GET_PEDIDO_ID_200_OK.png](Evidencias/GET_PEDIDO_ID_200_OK.png)
+
+### TESTE-GET-006 — Consulta de Pedido Inexistente (HTTP 404)
+
+- **Ferramenta:** Postman
+- **Método:** GET
+- **Endpoint:** `http://127.0.0.1:8000/pedidos/999`
+- **Base de dados:** MySQL
+- **Resultado:** HTTP 404 Not Found
+- **Tempo de resposta:** 116 ms
+- **Tamanho da resposta:** 169 B
+- **Mensagem:** Pedido não encontrado
+- **Estado:** Aprovado
+
+O teste confirmou que a API identifica corretamente a ausência de um pedido na base de dados.
+
+Quando o identificador não corresponde a um registo, o endpoint devolve HTTP 404 e uma mensagem JSON adequada.
+
+Neste cenário, HTTP 404 representa o comportamento esperado da aplicação, e não uma falha técnica.
+
+**Relatório:** [TESTE-GET-006.md](Relatorios/TESTE-GET-006.md)
+
+**Evidência:** [GET_PEDIDO_INEXISTENTE_404.png](Evidencias/GET_PEDIDO_INEXISTENTE_404.png)
 
 ---
 
@@ -388,10 +465,8 @@ As configurações locais foram atualizadas para utilizar a nova conta.
 
 Após a correção, o teste devolveu:
 
-```text
-Ligação ao MySQL estabelecida com sucesso.
-Total de pedidos encontrados: 5
-```
+    Ligação ao MySQL estabelecida com sucesso.
+    Total de pedidos encontrados: 5
 
 A consulta confirmou que a aplicação Python conseguiu autenticar-se e aceder aos dados.
 
@@ -401,13 +476,20 @@ A consulta confirmou que a aplicação Python conseguiu autenticar-se e aceder a
 
 **Evidência:** [Erro MySQL 1045 e correção](Evidencias/MYSQL_ERRO_1045_CORRECAO.png)
 
+### Validação do Comportamento HTTP 404
+
+O teste `TESTE-GET-006` demonstrou que a ausência de um pedido pode originar uma resposta HTTP 404 legítima.
+
+O comportamento foi previsto e implementado na aplicação, não sendo classificado como incidente.
+
+**Relatório relacionado:** [TESTE-GET-006.md](Relatorios/TESTE-GET-006.md)
+
 ### Incidentes Planeados
 
 Os próximos cenários serão simulados num ambiente controlado.
 
 | Cenário | Falha a investigar | Código HTTP previsto |
 |---|---|---|
-| Consulta de pedido inexistente | Recurso não encontrado | 404 |
 | Envio de dados inválidos | Erro de validação | 400/422 |
 | Falha de autenticação na API | Credenciais inválidas | 401 |
 | Permissão insuficiente | Acesso proibido | 403 |
@@ -430,40 +512,42 @@ Cada investigação incluirá:
 
 ## Estrutura do Repositório
 
-```text
-api-troubleshooting-lab/
-|
-|-- api/
-|   |-- main.py
-|   |-- database.py
-|   |-- testar_ligacao.py
-|
-|-- database/
-|   |-- 01_criar_estrutura.sql
-|   |-- 02_inserir_dados.sql
-|
-|-- Evidencias/
-|   |-- GET_200_OK.png
-|   |-- POST_200_OK.png
-|   |-- GET_HEALTH_200_OK.png
-|   |-- GET_PEDIDOS_MYSQL_200_OK_01.png
-|   |-- GET_PEDIDOS_MYSQL_200_OK_02.png
-|   |-- MYSQL_CRIACAO_TABELA_PEDIDOS.png
-|   |-- MYSQL_INSERCAO_PEDIDOS.png
-|   |-- MYSQL_ERRO_1045_CORRECAO.png
-|
-|-- Relatorios/
-|   |-- TESTE-GET-001.md
-|   |-- TESTE-POST-002.md
-|   |-- TESTE-GET-003.md
-|   |-- TESTE-GET-004.md
-|   |-- INC-API-001.md
-|
-|-- .env.example
-|-- .gitignore
-|-- requirements.txt
-|-- README.md
-```
+    api-troubleshooting-lab/
+    |
+    |-- api/
+    |   |-- main.py
+    |   |-- database.py
+    |   |-- testar_ligacao.py
+    |
+    |-- database/
+    |   |-- 01_criar_estrutura.sql
+    |   |-- 02_inserir_dados.sql
+    |
+    |-- Evidencias/
+    |   |-- GET_200_OK.png
+    |   |-- POST_200_OK.png
+    |   |-- GET_HEALTH_200_OK.png
+    |   |-- GET_PEDIDOS_MYSQL_200_OK_01.png
+    |   |-- GET_PEDIDOS_MYSQL_200_OK_02.png
+    |   |-- GET_PEDIDO_ID_200_OK.png
+    |   |-- GET_PEDIDO_INEXISTENTE_404.png
+    |   |-- MYSQL_CRIACAO_TABELA_PEDIDOS.png
+    |   |-- MYSQL_INSERCAO_PEDIDOS.png
+    |   |-- MYSQL_ERRO_1045_CORRECAO.png
+    |
+    |-- Relatorios/
+    |   |-- TESTE-GET-001.md
+    |   |-- TESTE-POST-002.md
+    |   |-- TESTE-GET-003.md
+    |   |-- TESTE-GET-004.md
+    |   |-- TESTE-GET-005.md
+    |   |-- TESTE-GET-006.md
+    |   |-- INC-API-001.md
+    |
+    |-- .env.example
+    |-- .gitignore
+    |-- requirements.txt
+    |-- README.md
 
 O ficheiro `.env` verdadeiro e o ambiente virtual `.venv` permanecem locais e não fazem parte do repositório.
 
@@ -482,21 +566,15 @@ O ficheiro `.env` verdadeiro e o ambiente virtual `.venv` permanecem locais e n�
 
 Na pasta principal do projeto:
 
-```powershell
-python -m venv .venv
-```
+    python -m venv .venv
 
 Ativar o ambiente no Windows PowerShell:
 
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
+    .\.venv\Scripts\Activate.ps1
 
 ### 2. Instalar as Dependências
 
-```powershell
-python -m pip install -r requirements.txt
-```
+    python -m pip install -r requirements.txt
 
 As dependências incluem FastAPI, Uvicorn, MySQL Connector/Python e python-dotenv.
 
@@ -508,6 +586,7 @@ No MySQL Workbench:
 2. Executar `database/01_criar_estrutura.sql`.
 3. Numa base inicialmente vazia, executar `database/02_inserir_dados.sql`.
 4. Confirmar a existência dos cinco pedidos fictícios.
+5. Configurar um utilizador com as permissões necessárias.
 
 ### 4. Configurar as Variáveis de Ambiente
 
@@ -515,13 +594,11 @@ Criar um ficheiro `.env` na pasta principal com base em `.env.example`.
 
 Configurar os valores de ligação ao MySQL:
 
-```dotenv
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_NAME=api_troubleshooting_lab
-DB_USER=seu_utilizador_mysql
-DB_PASSWORD=sua_palavra_passe
-```
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_NAME=api_troubleshooting_lab
+    DB_USER=seu_utilizador_mysql
+    DB_PASSWORD=sua_palavra_passe
 
 O utilizador configurado deve ter permissões adequadas sobre a base de dados do laboratório.
 
@@ -531,33 +608,31 @@ Não publicar o ficheiro `.env` com credenciais reais.
 
 Executar:
 
-```powershell
-python -m api.testar_ligacao
-```
+    python -m api.testar_ligacao
 
 Numa base com os cinco registos de teste, o resultado esperado é:
 
-```text
-Ligação ao MySQL estabelecida com sucesso.
-Total de pedidos encontrados: 5
-```
+    Ligação ao MySQL estabelecida com sucesso.
+    Total de pedidos encontrados: 5
 
 ### 6. Executar a API
 
 Na pasta principal do projeto:
 
-```powershell
-python -m uvicorn api.main:app --reload
-```
+    python -m uvicorn api.main:app --reload
 
 A aplicação ficará disponível em:
 
 `http://127.0.0.1:8000`
 
-Endpoints disponíveis:
+### Endpoints Disponíveis
 
 - `GET http://127.0.0.1:8000/health`
 - `GET http://127.0.0.1:8000/pedidos`
+- `GET http://127.0.0.1:8000/pedidos/2`
+- `GET http://127.0.0.1:8000/pedidos/999`
+
+Os dois últimos endereços permitem testar os cenários HTTP 200 e HTTP 404.
 
 Documentação interativa:
 
@@ -590,19 +665,23 @@ Para interromper o servidor, pressionar `Ctrl + C` no terminal.
 - [x] Criação de utilizador MySQL com permissões limitadas.
 - [x] Validação da ligação Python–MySQL.
 - [x] Diagnóstico e resolução do incidente INC-API-001.
-- [x] Implementação do endpoint GET `/pedidos` integrado com MySQL.
+- [x] Implementação do endpoint GET `/pedidos`.
 - [x] Validação da consulta dos cinco pedidos no Postman.
 - [x] Documentação do TESTE-GET-004 e respetivas evidências.
-- [x] Publicação do código e da documentação técnica.
+- [x] Implementação do endpoint GET `/pedidos/{pedido_id}`.
+- [x] Validação da consulta de um pedido existente.
+- [x] Validação da resposta HTTP 404 para pedido inexistente.
+- [x] Documentação dos testes TESTE-GET-005 e TESTE-GET-006.
+- [x] Publicação do código e das evidências no GitHub.
+- [x] Organização dos relatórios no Google Drive e no Notion.
 
 ### Próximas Etapas
 
-- [ ] Implementar GET `/pedidos/{id}`.
 - [ ] Implementar POST `/pedidos`.
 - [ ] Validar a persistência de novos pedidos através da API.
 - [ ] Criar testes automáticos no Postman.
 - [ ] Implementar tratamento estruturado de erros e logs.
-- [ ] Simular incidentes HTTP 400, 401, 403, 404 e 500.
+- [ ] Simular incidentes HTTP 400, 401, 403 e 500.
 - [ ] Investigar falhas de comunicação com MySQL.
 - [ ] Documentar causas, correções e validações.
 - [ ] Exportar e publicar a coleção Postman.
@@ -621,6 +700,8 @@ Para interromper o servidor, pressionar `Ctrl + C` no terminal.
 - Inserção e consulta de dados relacionais.
 - Integração Python–MySQL.
 - Desenvolvimento de endpoints HTTP com consultas SQL.
+- Utilização de consultas SQL parametrizadas.
+- Tratamento de recursos inexistentes com HTTP 404.
 - Diagnóstico de erros de autenticação.
 - Interpretação de códigos MySQL e SQLSTATE.
 - Gestão básica de utilizadores e permissões.
