@@ -4,59 +4,367 @@
 
 Este projeto apresenta um laboratório prático de testes e investigação de incidentes em APIs REST, desenvolvido com foco nas atividades de Suporte Aplicacional Júnior.
 
-O laboratório combina testes HTTP utilizando o Postman com a criação de uma API simples em Python, destinada à simulação controlada de falhas de comunicação entre aplicações.
+O laboratório combina testes HTTP utilizando o Postman, o desenvolvimento de uma API REST em Python com FastAPI e a utilização de uma base de dados MySQL.
 
-O objetivo é desenvolver competências de diagnóstico técnico, interpretação de respostas HTTP, análise de erros e documentação de incidentes.
+O objetivo é desenvolver competências de diagnóstico técnico, interpretação de respostas HTTP, análise de erros, consultas SQL e documentação de incidentes aplicacionais.
+
+O projeto utiliza um cenário fictício de comércio eletrónico, permitindo reproduzir e investigar falhas de forma controlada.
+
+**Estado do projeto:** Em desenvolvimento.
+
+---
 
 ## Objetivos
 
-- Executar requisições HTTP GET e POST.
+- Executar e analisar requisições HTTP GET e POST.
 - Interpretar códigos de estado HTTP e respostas JSON.
-- Criar uma API REST simples utilizando Python e FastAPI.
+- Desenvolver uma API REST utilizando Python e FastAPI.
+- Implementar uma base de dados relacional MySQL.
+- Integrar a API Python com a base de dados.
+- Executar consultas SQL para verificar dados.
 - Simular e investigar erros HTTP 400, 401, 403, 404 e 500.
 - Analisar logs e identificar possíveis causas de falhas.
 - Validar correções através de novos testes.
 - Documentar procedimentos, resultados e evidências técnicas.
 
+---
+
 ## Tecnologias e Ferramentas
 
-- Postman
-- HTTP e APIs REST
-- JSON
 - Python
 - FastAPI
+- Uvicorn
+- MySQL 8.0
+- MySQL Workbench
+- Postman
+- SQL
+- HTTP e APIs REST
+- JSON
+- Visual Studio Code
 - GitHub
+
+---
 
 ## Cenário do Laboratório
 
-O projeto utiliza um cenário fictício de comércio eletrónico, no qual uma API permite consultar e registar pedidos de clientes.
+O laboratório simula uma aplicação de comércio eletrónico que utiliza uma API REST para consultar e registar pedidos fictícios de clientes.
 
-Durante os testes, serão simuladas situações de falha para reproduzir atividades comuns de Suporte Aplicacional.
+A arquitetura prevista é composta por três componentes:
+
+1. **Postman:** utilizado para enviar requisições HTTP e analisar respostas.
+2. **FastAPI:** responsável por receber e processar as requisições.
+3. **MySQL:** responsável pelo armazenamento dos pedidos.
+
+A integração entre FastAPI e MySQL será implementada nas próximas etapas.
+
+Durante o desenvolvimento serão simulados incidentes para reproduzir situações comuns de Suporte Aplicacional.
+
+---
+
+## Desenvolvimento da API
+
+Foi criada uma API REST em Python utilizando o framework FastAPI e o servidor Uvicorn.
+
+### Funcionalidades Implementadas
+
+- Inicialização da aplicação FastAPI.
+- Configuração do servidor local Uvicorn.
+- Implementação do endpoint GET `/health`.
+- Resposta estruturada em JSON.
+- Teste de comunicação HTTP através do Postman.
+
+### Endpoint Health Check
+
+**Método:** GET
+
+**Endpoint:** `http://127.0.0.1:8000/health`
+
+**Resposta esperada:**
+
+```json
+{
+  "status": "ok",
+  "message": "API em funcionamento"
+}
+```
+
+O endpoint permite verificar se a aplicação está a responder a requisições HTTP.
+
+Esta verificação confirma a disponibilidade básica da aplicação, mas não valida, por si só, a conectividade com a base de dados.
+
+**Código-fonte:** [api/main.py](api/main.py)
+
+---
+
+## Base de Dados MySQL
+
+O laboratório utiliza uma base de dados MySQL para armazenar informações de pedidos fictícios.
+
+### Estrutura da Base de Dados
+
+- **Base de dados:** `api_troubleshooting_lab`
+- **Tabela:** `pedidos`
+- **SGBD:** MySQL 8.0
+- **Ferramenta de administração:** MySQL Workbench
+
+### Tabela pedidos
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| id | INT | Identificador único do pedido |
+| cliente | VARCHAR(100) | Nome fictício do cliente |
+| produto | VARCHAR(100) | Produto associado ao pedido |
+| quantidade | INT | Quantidade de unidades |
+| estado | VARCHAR(30) | Estado atual do pedido |
+| data_criacao | TIMESTAMP | Data e hora de criação |
+
+### Regras de Integridade
+
+A estrutura da tabela inclui:
+
+- Chave primária no campo `id`.
+- Incremento automático do identificador.
+- Campos obrigatórios definidos com `NOT NULL`.
+- Estado inicial padrão `pendente`.
+- Restrição `CHECK` para impedir quantidades inferiores ou iguais a zero.
+- Registo automático da data de criação.
+
+### Implementação
+
+A base de dados e a tabela foram criadas e validadas através do MySQL Workbench.
+
+**Script SQL:** [01_criar_estrutura.sql](database/01_criar_estrutura.sql)
+
+**Evidência:** [Criação da tabela pedidos](Evidencias/MYSQL_CRIACAO_TABELA_PEDIDOS.png)
+
+A inserção dos dados fictícios e a integração com a API serão realizadas nas próximas etapas.
+
+---
+
+## Testes HTTP Realizados
+
+### TESTE-GET-001 — Verificação de Comunicação HTTP
+
+**Ferramenta:** Postman
+
+**Método:** GET
+
+**Endpoint:** `https://postman-echo.com/get`
+
+**Resultado:** HTTP 200 OK
+
+**Tempo de resposta:** 384 ms
+
+**Estado:** Aprovado
+
+O teste confirmou que a API pública respondeu corretamente à requisição GET.
+
+**Relatório:** [TESTE-GET-001.md](Relatorios/TESTE-GET-001.md)
+
+**Evidência:** [GET_200_OK.png](Evidencias/GET_200_OK.png)
+
+### TESTE-POST-002 — Verificação de Envio de Dados HTTP
+
+**Ferramenta:** Postman
+
+**Método:** POST
+
+**Endpoint:** `https://postman-echo.com/post`
+
+**Resultado:** HTTP 200 OK
+
+**Tempo de resposta:** 433 ms
+
+**Estado:** Aprovado
+
+O teste confirmou que a API recebeu e devolveu corretamente os dados JSON enviados.
+
+O Postman Echo não armazenou os dados numa base de dados.
+
+**Relatório:** [TESTE-POST-002.md](Relatorios/TESTE-POST-002.md)
+
+**Evidência:** [POST_200_OK.png](Evidencias/POST_200_OK.png)
+
+### TESTE-GET-003 — Health Check da API Local
+
+**Ferramenta:** Postman
+
+**Método:** GET
+
+**Endpoint:** `http://127.0.0.1:8000/health`
+
+**Resultado:** HTTP 200 OK
+
+**Tempo de resposta:** 5 ms
+
+**Estado:** Aprovado
+
+O teste confirmou que a API desenvolvida em Python estava a responder corretamente no ambiente local.
+
+**Relatório:** [TESTE-GET-003.md](Relatorios/TESTE-GET-003.md)
+
+**Evidência:** [GET_HEALTH_200_OK.png](Evidencias/GET_HEALTH_200_OK.png)
+
+---
+
+## Investigação de Incidentes
+
+O laboratório irá incluir simulações controladas de incidentes relacionados com APIs REST e operações de base de dados.
+
+### Cenários Planeados
+
+| Incidente | Cenário | Categoria |
+|---|---|---|
+| INC-API-001 | Consulta de pedido inexistente | HTTP 404 |
+| INC-API-002 | Envio de dados inválidos | HTTP 400/422 |
+| INC-API-003 | Falha de autenticação | HTTP 401 |
+| INC-API-004 | Permissão insuficiente | HTTP 403 |
+| INC-API-005 | Falha de comunicação com MySQL | HTTP 500/503 |
+
+Os códigos apresentados representam os cenários previstos e dependerão do tratamento de erros implementado.
+
+Cada investigação incluirá:
+
+1. Descrição do incidente.
+2. Comportamento esperado e observado.
+3. Reprodução da falha.
+4. Análise de respostas HTTP e logs.
+5. Identificação da causa.
+6. Aplicação de correção.
+7. Validação através de novos testes.
+8. Registo de evidências e conclusão técnica.
+
+**Estado:** Investigações ainda não iniciadas.
+
+---
+
+## Estrutura do Repositório
+
+```text
+api-troubleshooting-lab/
+|
+|-- api/
+|   |-- main.py
+|
+|-- database/
+|   |-- 01_criar_estrutura.sql
+|
+|-- Evidencias/
+|   |-- GET_200_OK.png
+|   |-- POST_200_OK.png
+|   |-- GET_HEALTH_200_OK.png
+|   |-- MYSQL_CRIACAO_TABELA_PEDIDOS.png
+|
+|-- Relatorios/
+|   |-- TESTE-GET-001.md
+|   |-- TESTE-POST-002.md
+|   |-- TESTE-GET-003.md
+|
+|-- .gitignore
+|-- requirements.txt
+|-- README.md
+```
+
+A estrutura será ampliada à medida que forem implementadas novas funcionalidades e investigações.
+
+---
+
+## Configuração do Ambiente
+
+### Requisitos
+
+- Python compatível com as dependências do projeto.
+- MySQL Server 8.0.
+- MySQL Workbench, opcional para administração.
+- Postman para execução de testes.
+
+### Instalação das Dependências
+
+Criar e ativar um ambiente virtual Python.
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Instalar as bibliotecas:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+### Executar a API
+
+Na pasta principal do projeto:
+
+```powershell
+python -m uvicorn api.main:app --reload
+```
+
+A API ficará disponível localmente em:
+
+`http://127.0.0.1:8000`
+
+Documentação interativa automática:
+
+`http://127.0.0.1:8000/docs`
+
+O servidor pode ser interrompido com `Ctrl + C`.
+
+**Nota:** a ligação entre a API e o MySQL ainda não foi implementada nesta versão.
+
+---
 
 ## Estado do Projeto
 
-**Em desenvolvimento.**
+### Atividades Concluídas
 
-### Atividades realizadas
+- [x] Configuração do Postman.
+- [x] Teste HTTP GET numa API pública.
+- [x] Teste HTTP POST com dados JSON.
+- [x] Criação da API Python com FastAPI.
+- [x] Configuração do ambiente virtual.
+- [x] Instalação das dependências.
+- [x] Implementação do endpoint GET `/health`.
+- [x] Validação do Health Check no Postman.
+- [x] Criação da base de dados MySQL.
+- [x] Criação da tabela `pedidos`.
+- [x] Publicação do script SQL e da evidência.
+- [x] Documentação dos primeiros testes.
 
-- Configuração do Postman.
-- Execução de uma requisição GET numa API pública.
-- Validação de resposta HTTP 200 OK.
-- Análise da resposta JSON.
-- Registo da primeira evidência técnica.
+### Próximas Etapas
 
-### Próximas etapas
+- [ ] Inserir pedidos fictícios na base MySQL.
+- [ ] Executar consultas SQL de validação.
+- [ ] Integrar FastAPI com MySQL.
+- [ ] Implementar GET `/pedidos`.
+- [ ] Implementar GET `/pedidos/{id}`.
+- [ ] Implementar POST `/pedidos`.
+- [ ] Criar testes automáticos no Postman.
+- [ ] Simular e investigar incidentes HTTP.
+- [ ] Documentar causas, correções e validações.
+- [ ] Exportar e publicar a coleção Postman.
+- [ ] Realizar a revisão final do portfólio.
 
-- Executar e documentar uma requisição POST.
-- Desenvolver a API de gestão de pedidos.
-- Simular incidentes HTTP.
-- Investigar causas e validar correções.
-- Consolidar os relatórios e as evidências.
+---
 
-## Documentação
+## Competências Trabalhadas
 
-Os relatórios técnicos, as evidências e os ficheiros de testes serão organizados neste repositório à medida que o laboratório avançar.
+- Testes de APIs REST.
+- Comunicação HTTP.
+- Interpretação de respostas JSON.
+- Desenvolvimento básico de APIs com Python.
+- Utilização do framework FastAPI.
+- Administração básica de bases de dados MySQL.
+- Criação de tabelas e restrições SQL.
+- Análise de resultados técnicos.
+- Documentação de testes e evidências.
+- Organização de projetos utilizando GitHub.
+
+---
 
 ## Nota
 
-Este projeto utiliza dados fictícios e foi desenvolvido para fins educativos e de demonstração de competências técnicas.
+Este projeto utiliza exclusivamente dados fictícios e foi desenvolvido para fins educativos e de demonstração de competências técnicas em Suporte Aplicacional.
+
+Os resultados apresentados correspondem a testes realizados num ambiente controlado, não representando um sistema empresarial em produção.
