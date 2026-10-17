@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
 from mysql.connector import Error
 
 from api.database import obter_ligacao
@@ -10,6 +11,14 @@ app = FastAPI(
     description="Laboratório de investigação de incidentes em APIs REST",
     version="1.0.0"
 )
+
+
+# Modelo para validar os dados de um novo pedido
+class NovoPedido(BaseModel):
+    cliente: str = Field(min_length=1, max_length=100)
+    produto: str = Field(min_length=1, max_length=100)
+    quantidade: int = Field(gt=0)
+    estado: str = Field(default="pendente", min_length=1, max_length=30)
 
 
 # Endpoint 1 — Verificar o funcionamento da API
@@ -28,10 +37,7 @@ def listar_pedidos():
     cursor = None
 
     try:
-        # Estabelecer ligação à base de dados
         ligacao = obter_ligacao()
-
-        # Preparar a consulta
         cursor = ligacao.cursor(dictionary=True)
 
         cursor.execute("""
@@ -41,9 +47,7 @@ def listar_pedidos():
             ORDER BY id
         """)
 
-        # Recuperar todos os pedidos
         pedidos = cursor.fetchall()
-
         return pedidos
 
     except Error:
@@ -53,7 +57,6 @@ def listar_pedidos():
         )
 
     finally:
-        # Fechar cursor e ligação
         if cursor is not None:
             cursor.close()
 
@@ -68,10 +71,7 @@ def consultar_pedido(pedido_id: int):
     cursor = None
 
     try:
-        # Estabelecer ligação à base de dados
         ligacao = obter_ligacao()
-
-        # Preparar a consulta
         cursor = ligacao.cursor(dictionary=True)
 
         cursor.execute("""
@@ -81,10 +81,8 @@ def consultar_pedido(pedido_id: int):
             WHERE id = %s
         """, (pedido_id,))
 
-        # Recuperar apenas um pedido
         pedido = cursor.fetchone()
 
-        # Verificar se o pedido existe
         if pedido is None:
             raise HTTPException(
                 status_code=404,
@@ -100,7 +98,61 @@ def consultar_pedido(pedido_id: int):
         )
 
     finally:
-        # Fechar cursor e ligação
+        if cursor is not None:
+            cursor.close()
+
+        if ligacao is not None and ligacao.is_connected():
+            ligacao.close()
+
+
+# Endpoint 4 — Criar um novo pedido
+@app.post("/pedidos", status_code=201)
+def criar_pedido(novo_pedido: NovoPedido):
+    ligacao = None
+    cursor = None
+
+    try:
+        # Estabelecer ligação ao MySQL
+        ligacao = obter_ligacao()
+        cursor = ligacao.cursor()
+
+        # Inserir os dados de forma parametrizada
+        cursor.execute("""
+            INSERT INTO pedidos
+                (cliente, produto, quantidade, estado)
+            VALUES (%s, %s, %s, %s)
+        """, (
+            novo_pedido.cliente,
+            novo_pedido.produto,
+            novo_pedido.quantidade,
+            novo_pedido.estado
+        ))
+
+        # Confirmar a gravação na base de dados
+        ligacao.commit()
+
+        # Recuperar o identificador criado pelo MySQL
+        pedido_id = cursor.lastrowid
+
+        return {
+            "id": pedido_id,
+            "cliente": novo_pedido.cliente,
+            "produto": novo_pedido.produto,
+            "quantidade": novo_pedido.quantidade,
+            "estado": novo_pedido.estado,
+            "message": "Pedido criado com sucesso"
+        }
+
+    except Error:
+        if ligacao is not None and ligacao.is_connected():
+            ligacao.rollback()
+
+        raise HTTPException(
+            status_code=503,
+            detail="Erro ao guardar o pedido na base de dados"
+        )
+
+    finally:
         if cursor is not None:
             cursor.close()
 
