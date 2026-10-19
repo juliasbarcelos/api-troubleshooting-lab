@@ -2,7 +2,7 @@
 
 ## Sobre o Projeto
 
-Este projeto apresenta um laboratório prático de testes, diagnóstico e investigação de incidentes em APIs REST, desenvolvido com foco nas atividades de Suporte Aplicacional Júnior.
+Este projeto apresenta um laboratório prático de testes, diagnóstico e investigação de incidentes em APIs REST, desenvolvido com foco nas atividades de **Suporte Aplicacional Júnior**.
 
 O laboratório integra o desenvolvimento de uma API REST em Python com FastAPI, uma base de dados MySQL, testes manuais e automáticos no Postman e investigação de problemas de conectividade.
 
@@ -10,7 +10,7 @@ O objetivo é demonstrar competências de suporte técnico a aplicações, anál
 
 O projeto utiliza um cenário fictício de comércio eletrónico, com pedidos de clientes armazenados numa base de dados local.
 
-**Estado:** Em desenvolvimento — funcionalidades e investigações principais concluídas.
+**Estado:** Funcionalidades principais e investigações concluídas. Revisão final do projeto em preparação.
 
 ---
 
@@ -28,6 +28,7 @@ O projeto utiliza um cenário fictício de comércio eletrónico, com pedidos de
 - Simular falhas HTTP 503 em ambiente controlado.
 - Validar a recuperação da aplicação.
 - Produzir relatórios e evidências técnicas.
+- Disponibilizar uma coleção Postman reutilizável.
 
 ---
 
@@ -126,7 +127,7 @@ Este endpoint verifica a disponibilidade básica da aplicação, mas não confir
 
 **URL:** `http://127.0.0.1:8000/pedidos`
 
-Consulta SQL:
+Consulta SQL de referência:
 
     SELECT
         id,
@@ -242,7 +243,7 @@ O pedido 6 foi criado num teste manual HTTP POST.
 
 O pedido 7 foi criado durante a validação automática HTTP 201.
 
-**Total após as validações realizadas:** 7 pedidos.
+**Total após as validações documentadas:** 7 pedidos.
 
 ### Scripts SQL
 
@@ -340,7 +341,7 @@ Uma consulta posterior confirmou que o pedido inválido não tinha sido armazena
 
 Foram implementadas verificações automáticas em JavaScript através de `pm.test()` e `pm.expect()`.
 
-Os scripts estão configurados em `Scripts > After response` no Postman.
+Os scripts estão configurados na área de testes do Postman.
 
 ### Resultados
 
@@ -371,13 +372,48 @@ Durante o teste HTTP 201 foi criado o pedido 7.
 
 A persistência foi confirmada diretamente no MySQL Workbench.
 
-### Limitações
+### Coleção Postman Disponível
 
-Os testes foram executados individualmente.
+A coleção completa de testes está disponível no repositório:
+
+**[API de Gestão de Pedidos — Coleção Postman](Postman/API_Gestao_de_Pedidos.postman_collection.json)**
+
+O ficheiro foi exportado no formato **Postman Collection v2.1** e contém:
+
+- 6 requisições HTTP.
+- 18 verificações automáticas em JavaScript.
+- Testes dos códigos HTTP 200, 201, 404 e 422.
+- Validação das respostas JSON.
+- Testes de criação de pedidos e rejeição de dados inválidos.
+
+#### Como Importar a Coleção
+
+1. Abrir o Postman.
+2. Selecionar **Import**.
+3. Escolher o ficheiro `API_Gestao_de_Pedidos.postman_collection.json`.
+4. Confirmar que a API local está em execução na porta 8000.
+5. Preparar a base de dados com os dados necessários.
+6. Executar as requisições individualmente.
+
+#### Requisitos dos Dados de Teste
+
+Algumas verificações dependem do conteúdo existente no MySQL.
+
+Por exemplo:
+
+- O teste GET `/pedidos` exige pelo menos seis pedidos.
+- O teste GET `/pedidos/2` espera um pedido específico com os dados utilizados no laboratório.
+- O teste POST válido cria um novo registo a cada execução bem-sucedida.
+
+Para reproduzir todos os resultados, é necessário preparar dados compatíveis.
+
+#### Limitações
+
+Os 18 testes foram executados individualmente.
 
 Ainda não foi realizada uma execução completa através do Postman Collection Runner.
 
-Os testes POST válidos modificam a base de dados e precisam de ser executados de forma controlada.
+A coleção não automatiza a preparação e a limpeza dos dados.
 
 **Relatório completo:** [TESTES-AUTOMATICOS-001.md](Relatorios/TESTES-AUTOMATICOS-001.md)
 
@@ -431,8 +467,6 @@ A configuração local foi atualizada para utilizar essa conta.
 Após a correção, a ligação Python–MySQL foi estabelecida com sucesso e a consulta encontrou os cinco pedidos iniciais.
 
 **Relatório:** [INC-API-001.md](Relatorios/INC-API-001.md)
-
-**Evidência:** [MYSQL_ERRO_1045_CORRECAO.png](Evidencias/MYSQL_ERRO_1045_CORRECAO.png)
 
 ---
 
@@ -494,7 +528,9 @@ Esta opção faz com que os valores do `.env` tenham prioridade sobre variáveis
 
 Após a alteração, foi possível reproduzir o HTTP 503.
 
-Posteriormente, o ficheiro `database.py` foi restaurado à configuração original.
+Posteriormente, o ficheiro `database.py` foi restaurado à configuração original:
+
+    load_dotenv(BASE_DIR / ".env")
 
 A origem exata da diferença inicial de configuração entre processos não foi estabelecida de forma conclusiva.
 
@@ -657,30 +693,13 @@ As investigações permitiram desenvolver conhecimentos práticos sobre:
     |   |-- 01_criar_estrutura.sql
     |   |-- 02_inserir_dados.sql
     |
+    |-- Postman/
+    |   |-- README.md
+    |   |-- API_Gestao_de_Pedidos.postman_collection.json
+    |
     |-- Evidencias/
-    |   |-- GET_200_OK.png
-    |   |-- POST_200_OK.png
-    |   |-- GET_HEALTH_200_OK.png
-    |   |-- GET_PEDIDOS_MYSQL_200_OK_01.png
-    |   |-- GET_PEDIDOS_MYSQL_200_OK_02.png
-    |   |-- GET_PEDIDO_ID_200_OK.png
-    |   |-- GET_PEDIDO_INEXISTENTE_404.png
-    |   |-- POST_PEDIDO_201_CREATED.png
-    |   |-- POST_QUANTIDADE_INVALIDA_422.png
-    |   |-- MYSQL_CRIACAO_TABELA_PEDIDOS.png
-    |   |-- MYSQL_INSERCAO_PEDIDOS.png
-    |   |-- MYSQL_ERRO_1045_CORRECAO.png
-    |   |-- MYSQL_VALIDACAO_POST_PEDIDO_ID_6.png
-    |   |-- MYSQL_VALIDACAO_SEM_INSERCAO_422.png
-    |   |-- AUTO_GET_HEALTH_200.png
-    |   |-- AUTO_GET_PEDIDOS_200.png
-    |   |-- AUTO_GET_PEDIDO_ID_200.png
-    |   |-- AUTO_GET_PEDIDO_404.png
-    |   |-- AUTO_POST_INVALIDO_422_01.png
-    |   |-- AUTO_POST_INVALIDO_422_02.png
-    |   |-- AUTO_POST_CRIACAO_201_01.png
-    |   |-- AUTO_POST_CRIACAO_201_02.png
-    |   |-- AUTO_MYSQL_PEDIDO_ID_7.png
+    |   |-- Capturas dos testes HTTP
+    |   |-- Capturas dos testes automáticos
     |   |-- INC-API-002_01_ESTADO_INICIAL_200.png
     |   |-- INC-API-002_02_FALHA_MYSQL_503.png
     |   |-- INC-API-002_04_RECUPERACAO_FINAL_8000.png
@@ -777,6 +796,18 @@ Documentação interativa:
 
 `http://127.0.0.1:8000/docs`
 
+### 7. Importar os Testes no Postman
+
+1. Abrir o Postman.
+2. Selecionar **Import**.
+3. Selecionar o ficheiro:
+
+   `Postman/API_Gestao_de_Pedidos.postman_collection.json`
+
+4. Confirmar o endereço local da API.
+5. Preparar os dados necessários para os testes.
+6. Executar as requisições.
+
 ### Endpoints para Teste
 
 - `GET http://127.0.0.1:8000/health`
@@ -830,11 +861,13 @@ Evitar iniciar várias instâncias simultâneas na mesma porta.
 - [x] Confirmação de HTTP 200 e 3/3 testes após a recuperação.
 - [x] Publicação dos relatórios e evidências no GitHub.
 - [x] Organização da documentação no Google Drive e no Notion.
+- [x] Exportação da coleção Postman v2.1.
+- [x] Verificação da coleção quanto a credenciais expostas.
+- [x] Publicação da coleção Postman no GitHub.
+- [x] Documentação da coleção no README.
 
 ### Próximas Etapas
 
-- [ ] Exportar e publicar a coleção Postman.
-- [ ] Rever a configuração dos testes para facilitar a sua reprodução.
 - [ ] Verificar os links e as evidências do repositório.
 - [ ] Realizar a revisão final do README e do código.
 - [ ] Concluir a apresentação do projeto no Notion.
@@ -868,6 +901,7 @@ Evitar iniciar várias instâncias simultâneas na mesma porta.
 - Interpretação de respostas JSON.
 - Validação da persistência de dados.
 - Verificação da rejeição de dados inválidos.
+- Exportação e documentação de coleções Postman.
 
 ### Diagnóstico e Suporte Aplicacional
 
@@ -887,6 +921,7 @@ Evitar iniciar várias instâncias simultâneas na mesma porta.
 - Organização de capturas de ecrã.
 - Documentação de procedimentos de diagnóstico.
 - Publicação de evidências técnicas no GitHub.
+- Organização de documentação no Google Drive e no Notion.
 
 ---
 
