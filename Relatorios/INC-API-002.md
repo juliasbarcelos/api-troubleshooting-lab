@@ -333,13 +333,7 @@ A integridade dos dados foi confirmada através de consultas SQL e da recuperaç
 
 ![Falha de ligação MySQL — HTTP 503](../Evidencias/INC-API-002_02_FALHA_MYSQL_503.png)
 
-### Evidência 3 — Recuperação na Porta Alternativa
-
-**Ficheiro:** `INC-API-002_03_RECUPERACAO_200.png`
-
-![Recuperação temporária na porta 8001](../Evidencias/INC-API-002_03_RECUPERACAO_200.png)
-
-### Evidência 4 — Recuperação Definitiva
+### Evidência 3 — Recuperação Definitiva
 
 **Ficheiro:** `INC-API-002_04_RECUPERACAO_FINAL_8000.png`
 
