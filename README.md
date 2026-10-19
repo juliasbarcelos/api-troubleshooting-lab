@@ -4,72 +4,68 @@
 
 Este projeto apresenta um laboratório prático de testes, diagnóstico e investigação de incidentes em APIs REST, desenvolvido com foco nas atividades de Suporte Aplicacional Júnior.
 
-O laboratório combina testes HTTP realizados no Postman, desenvolvimento de uma API REST em Python com FastAPI, integração com MySQL e validações automáticas com JavaScript.
+O laboratório integra o desenvolvimento de uma API REST em Python com FastAPI, uma base de dados MySQL, testes manuais e automáticos no Postman e investigação de problemas de conectividade.
 
-O objetivo é desenvolver competências de diagnóstico técnico, interpretação de respostas HTTP, análise de erros, consultas SQL, identificação de causas, resolução de problemas e documentação de incidentes aplicacionais.
+O objetivo é demonstrar competências de suporte técnico a aplicações, análise de respostas HTTP, consultas SQL, diagnóstico de incidentes, validação de dados e recuperação de serviços.
 
-O projeto utiliza um cenário fictício de comércio eletrónico, permitindo reproduzir e investigar falhas num ambiente local e controlado.
+O projeto utiliza um cenário fictício de comércio eletrónico, com pedidos de clientes armazenados numa base de dados local.
 
-**Estado do projeto:** Em desenvolvimento.
+**Estado:** Em desenvolvimento — funcionalidades e investigações principais concluídas.
 
 ---
 
 ## Objetivos
 
-- Executar e analisar requisições HTTP GET e POST.
-- Interpretar códigos de estado HTTP e respostas JSON.
 - Desenvolver uma API REST utilizando Python e FastAPI.
-- Implementar e consultar uma base de dados MySQL.
-- Integrar endpoints HTTP com operações SQL.
-- Criar novos pedidos e validar a persistência dos dados.
-- Verificar a rejeição de dados inválidos.
-- Implementar testes automáticos com JavaScript no Postman.
-- Validar respostas HTTP 200, 201, 404 e 422.
-- Diagnosticar falhas de autenticação e ligação ao MySQL.
-- Aplicar o princípio do menor privilégio.
-- Investigar cenários de indisponibilidade e erros aplicacionais.
-- Analisar logs e identificar causas de falhas.
-- Documentar procedimentos, resultados e evidências técnicas.
+- Integrar a API com uma base de dados MySQL.
+- Implementar operações de consulta e criação de pedidos.
+- Executar testes HTTP com Postman.
+- Interpretar respostas JSON e códigos HTTP.
+- Implementar testes automáticos em JavaScript.
+- Validar a persistência e integridade dos dados.
+- Investigar falhas de autenticação e conectividade MySQL.
+- Diagnosticar problemas de configuração e processos.
+- Simular falhas HTTP 503 em ambiente controlado.
+- Validar a recuperação da aplicação.
+- Produzir relatórios e evidências técnicas.
 
 ---
 
 ## Tecnologias e Ferramentas
 
-- Python
-- FastAPI
-- Pydantic
-- Uvicorn
-- MySQL 8.0
-- MySQL Workbench
-- MySQL Connector/Python
-- python-dotenv
-- Postman
-- JavaScript
-- SQL
-- HTTP e APIs REST
-- JSON
-- Visual Studio Code
-- GitHub
+| Tecnologia | Utilização |
+|---|---|
+| Python | Desenvolvimento da aplicação |
+| FastAPI | Implementação da API REST |
+| Pydantic | Validação de dados |
+| Uvicorn | Servidor ASGI |
+| MySQL 8.0 | Base de dados relacional |
+| MySQL Workbench | Administração e consultas SQL |
+| MySQL Connector/Python | Integração Python–MySQL |
+| python-dotenv | Configuração por variáveis de ambiente |
+| Postman | Testes manuais e automáticos |
+| JavaScript | Scripts de validação no Postman |
+| PowerShell | Diagnóstico de processos e portas |
+| Visual Studio Code | Desenvolvimento e execução |
+| GitHub | Versionamento e documentação |
 
 ---
 
-## Cenário do Laboratório
+## Arquitetura
 
-O laboratório simula uma aplicação de comércio eletrónico que utiliza uma API REST para consultar e criar pedidos fictícios.
+O laboratório é composto por três componentes principais:
 
-A arquitetura é composta por três componentes principais:
-
-1. **Postman:** envia requisições HTTP, analisa respostas e executa testes automáticos.
-2. **FastAPI:** recebe as requisições, valida dados e executa a lógica da aplicação.
-3. **MySQL:** armazena e disponibiliza os pedidos através de operações SQL.
+1. **Postman:** envia requisições e valida respostas HTTP.
+2. **FastAPI:** processa requisições, valida dados e executa operações SQL.
+3. **MySQL:** armazena os pedidos fictícios.
 
 ### Fluxo de Comunicação
 
     Postman
        |
-       | Requisição HTTP
+       | HTTP GET / POST
        v
-    FastAPI (Python + Pydantic)
+    FastAPI + Pydantic
        |
        | SELECT / INSERT
        v
@@ -79,68 +75,58 @@ A arquitetura é composta por três componentes principais:
        v
     FastAPI
        |
-       | Resposta HTTP / JSON
+       | HTTP + JSON
        v
     Postman
        |
-       | Testes automáticos JavaScript
+       | Testes JavaScript
        v
     Resultados de validação
 
-Quando os dados recebidos não respeitam as regras definidas, o FastAPI pode rejeitar a requisição antes de executar operações na base de dados.
-
 ---
 
-## Desenvolvimento da API
+## Funcionalidades Implementadas
 
-Foi desenvolvida uma API REST em Python utilizando FastAPI e o servidor Uvicorn.
-
-### Funcionalidades Implementadas
-
-- Inicialização da aplicação FastAPI.
-- Configuração do servidor Uvicorn.
-- Endpoint GET `/health`.
-- Endpoint GET `/pedidos`.
-- Endpoint GET `/pedidos/{pedido_id}`.
-- Endpoint POST `/pedidos`.
-- Validação de dados através do Pydantic.
-- Respostas estruturadas em JSON.
-- Ligação à base de dados MySQL.
-- Consultas e inserções SQL parametrizadas.
-- Confirmação de transações através de `commit()`.
-- Recuperação de identificadores gerados pelo MySQL.
-- Tratamento de pedidos inexistentes com HTTP 404.
+- Verificação básica do funcionamento da API.
+- Consulta de todos os pedidos.
+- Consulta de pedidos por identificador.
+- Criação de pedidos com persistência MySQL.
+- Validação de dados recebidos através de Pydantic.
+- Tratamento de recursos inexistentes com HTTP 404.
 - Rejeição de dados inválidos com HTTP 422.
-- Tratamento básico de erros MySQL com HTTP 503.
-- Testes HTTP manuais e automáticos através do Postman.
+- Tratamento básico de falhas MySQL com HTTP 503.
+- Consultas SQL parametrizadas.
+- Confirmação de transações com `commit()`.
+- Utilização de variáveis de ambiente.
+- Testes manuais e automáticos.
 
-### Endpoints Disponíveis
+### Endpoints
 
-| Método | Endpoint | Descrição | Estado |
-|---|---|---|---|
-| GET | `/health` | Verificação básica da API | Implementado |
-| GET | `/pedidos` | Consulta de todos os pedidos | Implementado |
-| GET | `/pedidos/{pedido_id}` | Consulta de um pedido por ID | Implementado |
-| POST | `/pedidos` | Criação de um pedido no MySQL | Implementado |
+| Método | Endpoint | Função |
+|---|---|---|
+| GET | `/health` | Verificar o funcionamento básico da API |
+| GET | `/pedidos` | Listar pedidos existentes |
+| GET | `/pedidos/{pedido_id}` | Consultar pedido específico |
+| POST | `/pedidos` | Criar novo pedido |
 
 ### GET /health
 
-**Endpoint:** `http://127.0.0.1:8000/health`
+**URL:** `http://127.0.0.1:8000/health`
 
-Resposta esperada:
+Resposta:
 
     {
       "status": "ok",
       "message": "API em funcionamento"
     }
 
-Este endpoint verifica a disponibilidade básica da aplicação, mas não confirma automaticamente a conectividade com o MySQL.
+Este endpoint verifica a disponibilidade básica da aplicação, mas não confirma automaticamente a ligação ao MySQL.
 
 ### GET /pedidos
 
-**Endpoint:** `http://127.0.0.1:8000/pedidos`
+**URL:** `http://127.0.0.1:8000/pedidos`
 
-Consulta SQL utilizada:
+Consulta SQL:
 
     SELECT
         id,
@@ -152,43 +138,31 @@ Consulta SQL utilizada:
     FROM pedidos
     ORDER BY id;
 
-Os pedidos armazenados no MySQL são devolvidos em formato JSON.
+A resposta apresenta os pedidos armazenados em formato JSON.
 
 ### GET /pedidos/{pedido_id}
 
-**Exemplo:** `http://127.0.0.1:8000/pedidos/2`
+Exemplo:
 
-Consulta SQL parametrizada:
+`http://127.0.0.1:8000/pedidos/2`
 
-    SELECT
-        id,
-        cliente,
-        produto,
-        quantidade,
-        estado,
-        data_criacao
-    FROM pedidos
-    WHERE id = %s;
+Utiliza uma consulta SQL parametrizada para procurar o identificador solicitado.
 
-Quando o pedido existe, a API devolve HTTP 200 OK.
+Quando o pedido existe, devolve HTTP 200.
 
-Quando não existe, devolve HTTP 404 Not Found:
+Quando não existe, devolve HTTP 404:
 
     {
       "detail": "Pedido não encontrado"
     }
 
-Este comportamento foi validado através dos testes TESTE-GET-005 e TESTE-GET-006.
-
 ### POST /pedidos
 
-**Endpoint:** `http://127.0.0.1:8000/pedidos`
+**URL:** `http://127.0.0.1:8000/pedidos`
 
-Permite criar pedidos através de requisições HTTP POST.
+Recebe dados JSON e cria um novo pedido na base MySQL.
 
-A API recebe dados JSON, valida os campos através do Pydantic e executa uma inserção na tabela MySQL.
-
-#### Exemplo de Requisição Válida
+Exemplo:
 
     {
       "cliente": "Cliente API",
@@ -197,86 +171,97 @@ A API recebe dados JSON, valida os campos através do Pydantic e executa uma ins
       "estado": "pendente"
     }
 
-#### Operação SQL
+A aplicação valida os campos através do Pydantic e executa uma operação SQL parametrizada:
 
     INSERT INTO pedidos
         (cliente, produto, quantidade, estado)
     VALUES (%s, %s, %s, %s);
 
-Após o INSERT, a aplicação executa `commit()` e recupera o identificador gerado através de `lastrowid`.
+Após a execução do INSERT, confirma a transação através de `commit()`.
 
-#### Exemplo de Resposta — HTTP 201 Created
+A resposta apresenta HTTP 201 Created e o identificador gerado pelo MySQL.
 
-    {
-      "id": 6,
-      "cliente": "Cliente API",
-      "produto": "Webcam",
-      "quantidade": 1,
-      "estado": "pendente",
-      "message": "Pedido criado com sucesso"
-    }
-
-A persistência do pedido foi confirmada no MySQL Workbench durante o TESTE-POST-007.
-
-### Validação de Dados com Pydantic
-
-O endpoint POST utiliza um modelo Pydantic para definir regras de validação:
+### Regras de Validação
 
 | Campo | Regra |
 |---|---|
-| cliente | Texto obrigatório, entre 1 e 100 caracteres |
-| produto | Texto obrigatório, entre 1 e 100 caracteres |
+| cliente | Texto obrigatório, 1 a 100 caracteres |
+| produto | Texto obrigatório, 1 a 100 caracteres |
 | quantidade | Número inteiro superior a zero |
-| estado | Texto de 1 a 30 caracteres; padrão `pendente` |
+| estado | Texto entre 1 e 30 caracteres; padrão `pendente` |
 
-A quantidade utiliza a restrição `gt=0`.
-
-#### Exemplo de Requisição Inválida
-
-    {
-      "cliente": "Cliente Teste Invalido",
-      "produto": "Webcam",
-      "quantidade": -2,
-      "estado": "pendente"
-    }
-
-O valor `-2` viola a regra de validação.
-
-#### Resposta HTTP 422
-
-O FastAPI rejeitou a requisição e identificou:
-
-- Tipo de erro: `greater_than`.
-- Campo inválido: `body → quantidade`.
-- Valor recebido: `-2`.
-- Mensagem: `Input should be greater than 0`.
-
-A validação ocorreu antes da execução da função responsável pelo INSERT.
-
-Uma consulta posterior ao MySQL confirmou que o pedido inválido não foi armazenado.
+Uma quantidade negativa é rejeitada com HTTP 422 antes da operação de inserção.
 
 **Código-fonte:** [api/main.py](api/main.py)
 
 ---
 
-## Integração Python + MySQL
+## Base de Dados MySQL
 
-Foi implementada a comunicação entre Python e a base de dados `api_troubleshooting_lab`.
+### Estrutura
 
-A integração utiliza `mysql-connector-python` e configurações carregadas através de `python-dotenv`.
+- **Base de dados:** `api_troubleshooting_lab`
+- **Tabela:** `pedidos`
+- **SGBD:** MySQL 8.0
 
-### Ficheiros
+### Campos
 
-- [database.py](api/database.py) — ligação ao MySQL.
-- [testar_ligacao.py](api/testar_ligacao.py) — teste de conectividade e consulta SQL.
-- [main.py](api/main.py) — endpoints da API.
-- [requirements.txt](requirements.txt) — dependências Python.
-- [.env.example](.env.example) — exemplo de configuração.
-- [.gitignore](.gitignore) — ficheiros excluídos do controlo de versões.
+| Campo | Tipo | Descrição |
+|---|---|---|
+| id | INT | Identificador automático |
+| cliente | VARCHAR(100) | Cliente fictício |
+| produto | VARCHAR(100) | Produto |
+| quantidade | INT | Quantidade |
+| estado | VARCHAR(30) | Estado do pedido |
+| data_criacao | TIMESTAMP | Data de criação |
+
+### Restrições
+
+- Chave primária no identificador.
+- Incremento automático.
+- Campos obrigatórios definidos com `NOT NULL`.
+- Estado padrão `pendente`.
+- Restrição `CHECK (quantidade > 0)`.
+- Data de criação automática.
+
+### Dados de Teste
+
+| ID | Cliente | Produto | Quantidade | Estado |
+|---|---|---|---|---|
+| 1 | Cliente Teste | Notebook | 1 | pendente |
+| 2 | Maria Silva | Monitor | 2 | enviado |
+| 3 | Joao Santos | Teclado | 3 | entregue |
+| 4 | Ana Costa | Rato Wireless | 1 | pendente |
+| 5 | Pedro Almeida | Impressora | 1 | cancelado |
+| 6 | Cliente API | Webcam | 1 | pendente |
+| 7 | Cliente API | Webcam | 1 | pendente |
+
+Os cinco primeiros pedidos foram inseridos através de SQL.
+
+O pedido 6 foi criado num teste manual HTTP POST.
+
+O pedido 7 foi criado durante a validação automática HTTP 201.
+
+**Total após as validações realizadas:** 7 pedidos.
+
+### Scripts SQL
+
+- [01_criar_estrutura.sql](database/01_criar_estrutura.sql)
+- [02_inserir_dados.sql](database/02_inserir_dados.sql)
+
+O script de inserção inicial não deve ser repetido numa base já preenchida, para evitar duplicações.
+
+---
+
+## Integração Python–MySQL
+
+A aplicação utiliza o módulo `api/database.py` para estabelecer ligações à base de dados.
+
+A configuração é carregada através do ficheiro local `.env`, utilizando `python-dotenv`.
 
 ### Segurança
 
-Foi criado o utilizador MySQL:
+Foi criado um utilizador específico para o laboratório:
 
 `api_suporte@localhost`
 
@@ -286,427 +271,143 @@ Com permissões limitadas:
     ON api_troubleshooting_lab.*
     TO 'api_suporte'@'localhost';
 
-As credenciais são mantidas no ficheiro `.env`, que não deve ser publicado no GitHub.
+A aplicação não necessita de utilizar permanentemente a conta administrativa `root`.
 
-Esta configuração evita a utilização da conta administrativa `root` pela aplicação.
+As credenciais são mantidas no ficheiro `.env`, não publicado no GitHub.
 
-### Validação Inicial da Ligação
+### Teste Direto da Ligação
 
-Comando executado:
+Comando:
 
     python -m api.testar_ligacao
 
-Resultado inicial:
+A consulta permite confirmar a conectividade e contar os pedidos armazenados.
 
-    Ligação ao MySQL estabelecida com sucesso.
-    Total de pedidos encontrados: 5
+O teste foi utilizado durante a investigação e a recuperação dos incidentes MySQL.
 
-Posteriormente, a integração foi validada através dos endpoints GET e POST.
+**Ficheiros relacionados:**
 
-### Validação da Escrita
+- [api/database.py](api/database.py)
+- [api/testar_ligacao.py](api/testar_ligacao.py)
+- [.env.example](.env.example)
+- [.gitignore](.gitignore)
 
-O TESTE-POST-007 criou o pedido de ID 6.
+---
+
+## Testes HTTP Manuais
+
+Foram realizados oito testes manuais, identificados e documentados individualmente.
+
+| Teste | Cenário | HTTP | Resultado |
+|---|---|---|---|
+| TESTE-GET-001 | GET numa API pública | 200 | Aprovado |
+| TESTE-POST-002 | POST numa API pública | 200 | Aprovado |
+| TESTE-GET-003 | Health Check local | 200 | Aprovado |
+| TESTE-GET-004 | Listagem de pedidos MySQL | 200 | Aprovado |
+| TESTE-GET-005 | Consulta de pedido por ID | 200 | Aprovado |
+| TESTE-GET-006 | Pedido inexistente | 404 | Aprovado |
+| TESTE-POST-007 | Criação com persistência MySQL | 201 | Aprovado |
+| TESTE-POST-008 | Quantidade inválida | 422 | Aprovado |
+
+### Relatórios
+
+- [TESTE-GET-001.md](Relatorios/TESTE-GET-001.md)
+- [TESTE-POST-002.md](Relatorios/TESTE-POST-002.md)
+- [TESTE-GET-003.md](Relatorios/TESTE-GET-003.md)
+- [TESTE-GET-004.md](Relatorios/TESTE-GET-004.md)
+- [TESTE-GET-005.md](Relatorios/TESTE-GET-005.md)
+- [TESTE-GET-006.md](Relatorios/TESTE-GET-006.md)
+- [TESTE-POST-007.md](Relatorios/TESTE-POST-007.md)
+- [TESTE-POST-008.md](Relatorios/TESTE-POST-008.md)
+
+### Validação da Persistência
+
+No TESTE-POST-007, a API criou o pedido 6 com HTTP 201.
 
 A gravação foi confirmada no MySQL Workbench.
 
 ### Validação da Rejeição
 
-O TESTE-POST-008 enviou uma quantidade negativa.
+No TESTE-POST-008, foi enviada uma quantidade negativa.
 
-O FastAPI devolveu HTTP 422 e a consulta posterior ao MySQL não encontrou o pedido inválido.
+O FastAPI respondeu com HTTP 422.
 
-### Validação Automatizada
-
-Durante os testes automáticos do POST, foi criado o pedido de ID 7.
-
-Uma consulta posterior ao MySQL confirmou a persistência do registo.
-
-**Estado:** Integração de leitura, escrita e validação funcional.
-
----
-
-## Base de Dados MySQL
-
-### Estrutura
-
-- **Base:** `api_troubleshooting_lab`
-- **Tabela:** `pedidos`
-- **SGBD:** MySQL 8.0
-- **Administração:** MySQL Workbench
-
-### Tabela pedidos
-
-| Campo | Tipo | Descrição |
-|---|---|---|
-| id | INT | Identificador único |
-| cliente | VARCHAR(100) | Nome fictício do cliente |
-| produto | VARCHAR(100) | Produto |
-| quantidade | INT | Quantidade |
-| estado | VARCHAR(30) | Estado do pedido |
-| data_criacao | TIMESTAMP | Data e hora de criação |
-
-### Regras de Integridade
-
-- Chave primária.
-- Identificador automático.
-- Campos obrigatórios com `NOT NULL`.
-- Estado padrão `pendente`.
-- Restrição `CHECK (quantidade > 0)`.
-- Data de criação automática.
-
-### Dados Iniciais
-
-| ID | Cliente | Produto | Quantidade | Estado |
-|---|---|---|---|---|
-| 1 | Cliente Teste | Notebook | 1 | pendente |
-| 2 | Maria Silva | Monitor | 2 | enviado |
-| 3 | Joao Santos | Teclado | 3 | entregue |
-| 4 | Ana Costa | Rato Wireless | 1 | pendente |
-| 5 | Pedro Almeida | Impressora | 1 | cancelado |
-
-### Pedidos Criados Através da API
-
-| ID | Cliente | Produto | Quantidade | Estado | Origem |
-|---|---|---|---|---|---|
-| 6 | Cliente API | Webcam | 1 | pendente | Teste manual |
-| 7 | Cliente API | Webcam | 1 | pendente | Teste automático |
-
-**Total de pedidos após os testes de criação:** 7.
-
-A quantidade negativa utilizada no TESTE-POST-008 não originou novos registos.
-
-### Scripts SQL
-
-- [01_criar_estrutura.sql](database/01_criar_estrutura.sql)
-- [02_inserir_dados.sql](database/02_inserir_dados.sql)
-
-O script de inserção inicial não deve ser executado repetidamente numa base já preenchida.
-
-### Evidências
-
-- [Criação da tabela](Evidencias/MYSQL_CRIACAO_TABELA_PEDIDOS.png)
-- [Inserção dos pedidos iniciais](Evidencias/MYSQL_INSERCAO_PEDIDOS.png)
-- [Persistência do pedido ID 6](Evidencias/MYSQL_VALIDACAO_POST_PEDIDO_ID_6.png)
-- [Ausência de inserção inválida](Evidencias/MYSQL_VALIDACAO_SEM_INSERCAO_422.png)
-- [Persistência do pedido ID 7](Evidencias/AUTO_MYSQL_PEDIDO_ID_7.png)
-
----
-
-## Testes HTTP Manuais Realizados
-
-### TESTE-GET-001 — Verificação de Comunicação HTTP
-
-- **Método:** GET
-- **Endpoint:** `https://postman-echo.com/get`
-- **Resultado:** HTTP 200 OK
-- **Tempo:** 384 ms
-- **Estado:** Aprovado
-
-**Relatório:** [TESTE-GET-001.md](Relatorios/TESTE-GET-001.md)
-
-**Evidência:** [GET_200_OK.png](Evidencias/GET_200_OK.png)
-
-### TESTE-POST-002 — Envio de Dados HTTP
-
-- **Método:** POST
-- **Endpoint:** `https://postman-echo.com/post`
-- **Resultado:** HTTP 200 OK
-- **Tempo:** 433 ms
-- **Estado:** Aprovado
-
-O Postman Echo recebeu e devolveu os dados JSON, sem os armazenar numa base de dados.
-
-**Relatório:** [TESTE-POST-002.md](Relatorios/TESTE-POST-002.md)
-
-**Evidência:** [POST_200_OK.png](Evidencias/POST_200_OK.png)
-
-### TESTE-GET-003 — Health Check da API
-
-- **Método:** GET
-- **Endpoint:** `http://127.0.0.1:8000/health`
-- **Resultado:** HTTP 200 OK
-- **Tempo:** 5 ms
-- **Estado:** Aprovado
-
-**Relatório:** [TESTE-GET-003.md](Relatorios/TESTE-GET-003.md)
-
-**Evidência:** [GET_HEALTH_200_OK.png](Evidencias/GET_HEALTH_200_OK.png)
-
-### TESTE-GET-004 — Consulta de Pedidos no MySQL
-
-- **Método:** GET
-- **Endpoint:** `http://127.0.0.1:8000/pedidos`
-- **Resultado:** HTTP 200 OK
-- **Tempo:** 54 ms
-- **Tamanho:** 766 B
-- **Pedidos devolvidos:** 5
-- **Estado:** Aprovado
-
-**Relatório:** [TESTE-GET-004.md](Relatorios/TESTE-GET-004.md)
-
-**Evidências:**
-
-- [GET_PEDIDOS_MYSQL_200_OK_01.png](Evidencias/GET_PEDIDOS_MYSQL_200_OK_01.png)
-- [GET_PEDIDOS_MYSQL_200_OK_02.png](Evidencias/GET_PEDIDOS_MYSQL_200_OK_02.png)
-
-### TESTE-GET-005 — Consulta de Pedido por ID
-
-- **Método:** GET
-- **Endpoint:** `http://127.0.0.1:8000/pedidos/2`
-- **Resultado:** HTTP 200 OK
-- **Tempo:** 109 ms
-- **Tamanho:** 251 B
-- **Pedido:** ID 2 — Maria Silva
-- **Estado:** Aprovado
-
-**Relatório:** [TESTE-GET-005.md](Relatorios/TESTE-GET-005.md)
-
-**Evidência:** [GET_PEDIDO_ID_200_OK.png](Evidencias/GET_PEDIDO_ID_200_OK.png)
-
-### TESTE-GET-006 — Pedido Inexistente
-
-- **Método:** GET
-- **Endpoint:** `http://127.0.0.1:8000/pedidos/999`
-- **Resultado:** HTTP 404 Not Found
-- **Tempo:** 116 ms
-- **Tamanho:** 169 B
-- **Mensagem:** Pedido não encontrado
-- **Estado:** Aprovado
-
-**Relatório:** [TESTE-GET-006.md](Relatorios/TESTE-GET-006.md)
-
-**Evidência:** [GET_PEDIDO_INEXISTENTE_404.png](Evidencias/GET_PEDIDO_INEXISTENTE_404.png)
-
-### TESTE-POST-007 — Criação de Pedido com Persistência MySQL
-
-- **Método:** POST
-- **Endpoint:** `http://127.0.0.1:8000/pedidos`
-- **Resultado:** HTTP 201 Created
-- **Tempo:** 488 ms
-- **Tamanho:** 257 B
-- **ID criado:** 6
-- **Cliente:** Cliente API
-- **Produto:** Webcam
-- **Estado:** Aprovado
-
-A API criou um novo pedido e a sua persistência foi confirmada no MySQL.
-
-**Relatório:** [TESTE-POST-007.md](Relatorios/TESTE-POST-007.md)
-
-**Evidências:**
-
-- [POST_PEDIDO_201_CREATED.png](Evidencias/POST_PEDIDO_201_CREATED.png)
-- [MYSQL_VALIDACAO_POST_PEDIDO_ID_6.png](Evidencias/MYSQL_VALIDACAO_POST_PEDIDO_ID_6.png)
-
-### TESTE-POST-008 — Validação de Quantidade Inválida
-
-- **Método:** POST
-- **Endpoint:** `http://127.0.0.1:8000/pedidos`
-- **Resultado:** HTTP 422 Unprocessable Entity
-- **Tempo:** 12 ms
-- **Tamanho:** 276 B
-- **Quantidade enviada:** -2
-- **Tipo de erro:** `greater_than`
-- **Campo inválido:** `quantidade`
-- **Registos encontrados no MySQL:** 0
-- **Estado:** Aprovado
-
-O teste confirmou que a API rejeitou uma quantidade negativa através do Pydantic.
-
-Uma consulta posterior ao MySQL confirmou que o pedido inválido não foi armazenado.
-
-**Relatório:** [TESTE-POST-008.md](Relatorios/TESTE-POST-008.md)
-
-**Evidências:**
-
-- [POST_QUANTIDADE_INVALIDA_422.png](Evidencias/POST_QUANTIDADE_INVALIDA_422.png)
-- [MYSQL_VALIDACAO_SEM_INSERCAO_422.png](Evidencias/MYSQL_VALIDACAO_SEM_INSERCAO_422.png)
+Uma consulta posterior confirmou que o pedido inválido não tinha sido armazenado.
 
 ---
 
 ## Testes Automáticos no Postman
 
-Foram implementados testes automáticos em JavaScript para validar os principais comportamentos da API de Gestão de Pedidos.
+Foram implementadas verificações automáticas em JavaScript através de `pm.test()` e `pm.expect()`.
 
-Os scripts foram configurados na secção `Scripts > After response` do Postman, utilizando `pm.test()` e `pm.expect()`.
+Os scripts estão configurados em `Scripts > After response` no Postman.
 
-### Metodologia
-
-Os testes foram adicionados às requisições da coleção `API de Gestão de Pedidos`.
-
-Cada script verifica automaticamente condições específicas da resposta recebida.
-
-Foram realizadas execuções individuais das requisições e analisados os resultados apresentados no separador `Test Results`.
-
-### Resumo dos Resultados
+### Resultados
 
 | Requisição | HTTP | Testes aprovados |
 |---|---|---|
-| GET /health | 200 OK | 2/2 |
-| GET /pedidos | 200 OK | 3/3 |
-| GET /pedidos/2 | 200 OK | 3/3 |
-| GET /pedidos/999 | 404 Not Found | 3/3 |
+| GET /health | 200 | 2/2 |
+| GET /pedidos | 200 | 3/3 |
+| GET /pedidos/2 | 200 | 3/3 |
+| GET /pedidos/999 | 404 | 3/3 |
 | POST /pedidos — quantidade inválida | 422 | 3/3 |
-| POST /pedidos — criação válida | 201 Created | 4/4 |
+| POST /pedidos — criação válida | 201 | 4/4 |
 | **Total** | | **18/18** |
 
-**Resultado:** 18 verificações automáticas aprovadas nas execuções individuais.
+**Estado:** Aprovado nas execuções individuais.
 
-### GET /health — HTTP 200
-
-**Testes:** 2/2 aprovados.
-
-Validações:
-
-- Confirmar HTTP 200.
-- Confirmar que o campo `status` apresenta `ok`.
-
-**Tempo observado:** 8 ms.
-
-**Evidência:** [AUTO_GET_HEALTH_200.png](Evidencias/AUTO_GET_HEALTH_200.png)
-
-### GET /pedidos — HTTP 200
-
-**Testes:** 3/3 aprovados.
-
-Validações:
-
-- Confirmar HTTP 200.
-- Confirmar que a resposta é uma lista JSON.
-- Confirmar que existem pelo menos seis pedidos.
-
-**Tempo observado:** 119 ms.
-
-**Evidência:** [AUTO_GET_PEDIDOS_200.png](Evidencias/AUTO_GET_PEDIDOS_200.png)
-
-### GET /pedidos/2 — HTTP 200
-
-**Testes:** 3/3 aprovados.
-
-Validações:
-
-- Confirmar HTTP 200.
-- Confirmar que o ID devolvido é 2.
-- Confirmar os dados de Maria Silva, produto Monitor, quantidade 2 e estado enviado.
-
-**Tempo observado:** 124 ms.
-
-**Evidência:** [AUTO_GET_PEDIDO_ID_200.png](Evidencias/AUTO_GET_PEDIDO_ID_200.png)
-
-### GET /pedidos/999 — HTTP 404
-
-**Testes:** 3/3 aprovados.
-
-Validações:
-
-- Confirmar HTTP 404.
-- Confirmar a mensagem `Pedido não encontrado`.
-- Confirmar que a resposta é um objeto JSON.
-
-**Tempo observado:** 117 ms.
-
-**Evidência:** [AUTO_GET_PEDIDO_404.png](Evidencias/AUTO_GET_PEDIDO_404.png)
-
-O código HTTP 404 foi considerado um resultado aprovado porque corresponde ao comportamento esperado.
-
-### POST /pedidos — Quantidade Inválida (HTTP 422)
-
-**Testes:** 3/3 aprovados.
-
-Validações:
-
-- Confirmar HTTP 422.
-- Confirmar que o erro está relacionado com o campo `quantidade`.
-- Confirmar que o valor inválido identificado é `-2`.
-
-**Tempo observado:** 5 ms.
-
-**Evidências:**
-
-- [AUTO_POST_INVALIDO_422_01.png](Evidencias/AUTO_POST_INVALIDO_422_01.png)
-- [AUTO_POST_INVALIDO_422_02.png](Evidencias/AUTO_POST_INVALIDO_422_02.png)
-
-O Pydantic rejeitou os dados inválidos antes da execução da função responsável pela inserção.
-
-### POST /pedidos — Criação Válida (HTTP 201)
-
-**Testes:** 4/4 aprovados.
-
-Validações:
-
-- Confirmar HTTP 201 Created.
-- Confirmar que o pedido recebeu um identificador numérico positivo.
-- Confirmar a mensagem `Pedido criado com sucesso`.
-- Confirmar que os dados devolvidos correspondem aos enviados.
-
-**Tempo observado:** 110 ms.
-
-O teste criou um pedido com os seguintes dados:
-
-| Campo | Valor |
-|---|---|
-| ID | 7 |
-| Cliente | Cliente API |
-| Produto | Webcam |
-| Quantidade | 1 |
-| Estado | pendente |
-
-A gravação foi posteriormente confirmada no MySQL Workbench.
-
-**Evidências:**
-
-- [AUTO_POST_CRIACAO_201_01.png](Evidencias/AUTO_POST_CRIACAO_201_01.png)
-- [AUTO_POST_CRIACAO_201_02.png](Evidencias/AUTO_POST_CRIACAO_201_02.png)
-- [AUTO_MYSQL_PEDIDO_ID_7.png](Evidencias/AUTO_MYSQL_PEDIDO_ID_7.png)
-
-### Análise Técnica
-
-Os testes automáticos validaram:
+### Validações Automatizadas
 
 - Códigos HTTP esperados.
 - Estrutura das respostas JSON.
-- Conteúdo e valores devolvidos.
-- Consulta de pedidos existentes.
-- Tratamento de pedidos inexistentes.
-- Validação de quantidades inválidas.
-- Criação de pedidos.
-- Persistência de dados no MySQL.
+- Identificadores devolvidos.
+- Dados de pedidos existentes.
+- Mensagem de pedido inexistente.
+- Rejeição de quantidade negativa.
+- Criação de um pedido válido.
+- Comparação dos dados enviados e recebidos.
 
-As respostas HTTP 404 e 422 foram consideradas aprovadas porque representam comportamentos esperados nos respetivos cenários.
+Durante o teste HTTP 201 foi criado o pedido 7.
 
-O POST válido foi executado de forma controlada, uma vez que cada requisição bem-sucedida cria um novo registo.
+A persistência foi confirmada diretamente no MySQL Workbench.
 
 ### Limitações
 
 Os testes foram executados individualmente.
 
-Ainda não foi realizada uma execução automatizada de toda a coleção através do Collection Runner.
+Ainda não foi realizada uma execução completa através do Postman Collection Runner.
 
-A validação de quantidade mínima de pedidos depende dos dados existentes na base local.
+Os testes POST válidos modificam a base de dados e precisam de ser executados de forma controlada.
 
-Os testes de criação modificam a base de dados e devem ser executados de forma controlada.
+**Relatório completo:** [TESTES-AUTOMATICOS-001.md](Relatorios/TESTES-AUTOMATICOS-001.md)
 
-### Conclusão
+### Evidências
 
-Foram implementadas e aprovadas 18 verificações automáticas distribuídas por seis requisições HTTP.
-
-**Estado:** Aprovado nas execuções individuais.
-
-**Relatório técnico:** [TESTES-AUTOMATICOS-001.md](Relatorios/TESTES-AUTOMATICOS-001.md)
+- [AUTO_GET_HEALTH_200.png](Evidencias/AUTO_GET_HEALTH_200.png)
+- [AUTO_GET_PEDIDOS_200.png](Evidencias/AUTO_GET_PEDIDOS_200.png)
+- [AUTO_GET_PEDIDO_ID_200.png](Evidencias/AUTO_GET_PEDIDO_ID_200.png)
+- [AUTO_GET_PEDIDO_404.png](Evidencias/AUTO_GET_PEDIDO_404.png)
+- [AUTO_POST_INVALIDO_422_01.png](Evidencias/AUTO_POST_INVALIDO_422_01.png)
+- [AUTO_POST_INVALIDO_422_02.png](Evidencias/AUTO_POST_INVALIDO_422_02.png)
+- [AUTO_POST_CRIACAO_201_01.png](Evidencias/AUTO_POST_CRIACAO_201_01.png)
+- [AUTO_POST_CRIACAO_201_02.png](Evidencias/AUTO_POST_CRIACAO_201_02.png)
+- [AUTO_MYSQL_PEDIDO_ID_7.png](Evidencias/AUTO_MYSQL_PEDIDO_ID_7.png)
 
 ---
 
 ## Investigação de Incidentes
 
+Foram investigados e resolvidos dois incidentes técnicos relacionados com a integração entre Python, FastAPI e MySQL.
+
 ### INC-API-001 — Falha de Autenticação MySQL
 
-**Categoria:** Autenticação na base de dados.
+**Categoria:** Autenticação na base de dados
 
-**Estado:** Resolvido e validado.
+**Estado:** Resolvido e validado
 
 #### Descrição
 
-Durante a configuração da ligação Python–MySQL, foi identificada uma falha de autenticação que impedia o acesso à base de dados do laboratório.
+Durante a configuração da integração Python–MySQL, foi identificada uma falha de autenticação.
 
 #### Erro Identificado
 
@@ -717,49 +418,229 @@ Durante a configuração da ligação Python–MySQL, foi identificada uma falha
 
 #### Diagnóstico
 
-A configuração inicial utilizava a conta `root` sem uma palavra-passe definida no ficheiro `.env`.
-
-As credenciais utilizadas não foram aceites pelo servidor.
-
-A investigação incluiu a verificação da conta autenticada no MySQL Workbench, a análise da configuração Python e a identificação do código de erro.
+A configuração inicial utilizava a conta administrativa `root` com credenciais que não foram aceites pelo servidor.
 
 #### Correção
 
-Foi criado o utilizador `api_suporte`, com credenciais próprias e permissões limitadas.
+Foi criado um utilizador específico para a aplicação, com credenciais próprias e permissões limitadas.
 
 A configuração local foi atualizada para utilizar essa conta.
 
 #### Validação
 
-A ligação passou a funcionar e a consulta SQL devolveu os cinco pedidos inicialmente inseridos.
-
-**Conclusão:** Incidente resolvido e correção validada.
+Após a correção, a ligação Python–MySQL foi estabelecida com sucesso e a consulta encontrou os cinco pedidos iniciais.
 
 **Relatório:** [INC-API-001.md](Relatorios/INC-API-001.md)
 
 **Evidência:** [MYSQL_ERRO_1045_CORRECAO.png](Evidencias/MYSQL_ERRO_1045_CORRECAO.png)
 
-### Respostas HTTP Esperadas
+---
 
-Os testes também permitiram validar respostas HTTP que não representam incidentes técnicos:
+### INC-API-002 — Indisponibilidade da Base de Dados MySQL
 
-- **404 Not Found:** pedido inexistente.
-- **422 Unprocessable Entity:** dados inválidos.
+**Data:** 19/10/2026
 
-Ambos os comportamentos foram previstos na aplicação e validados no Postman.
+**Categoria:** Conectividade / Base de dados
 
-### Cenários Planeados
+**Estado:** Resolvido e validado
 
-| Cenário | Código HTTP previsto |
-|---|---|
-| Campos obrigatórios ausentes | 422 |
-| Outros dados inválidos | 422 |
-| Falha de autenticação na API | 401 |
-| Permissões insuficientes | 403 |
-| Base de dados indisponível | 503 |
-| Erro interno não tratado | 500 |
+#### Objetivo
 
-Os cenários ainda não executados serão desenvolvidos e investigados nas próximas etapas.
+Simular uma falha de comunicação entre FastAPI e MySQL, verificar a resposta HTTP 503 e recuperar o serviço.
+
+#### Estado Inicial
+
+Antes da simulação:
+
+- Endpoint: GET `/pedidos`
+- HTTP: 200 OK
+- Tempo de resposta: 129 ms
+- Testes automáticos: 3/3 aprovados
+- Pedidos disponíveis: 7
+
+#### Simulação da Falha
+
+Foi alterada temporariamente a porta MySQL no ficheiro `.env`.
+
+**Configuração original:**
+
+    DB_PORT=3306
+
+**Configuração simulada:**
+
+    DB_PORT=3399
+
+O objetivo era provocar uma falha de comunicação sem interromper o servidor MySQL e sem modificar os dados.
+
+#### Erro MySQL Identificado
+
+O teste direto de ligação apresentou:
+
+- **Tipo:** InterfaceError
+- **Código MySQL:** 2003
+- **SQLSTATE:** None
+
+O erro indicou que o cliente não conseguiu estabelecer ligação ao servidor MySQL na porta configurada.
+
+#### Diagnóstico das Variáveis de Ambiente
+
+Durante a investigação, verificou-se o carregamento das configurações pelo `python-dotenv`.
+
+Foi testada temporariamente a opção:
+
+    load_dotenv(BASE_DIR / ".env", override=True)
+
+Esta opção faz com que os valores do `.env` tenham prioridade sobre variáveis de ambiente já existentes.
+
+Após a alteração, foi possível reproduzir o HTTP 503.
+
+Posteriormente, o ficheiro `database.py` foi restaurado à configuração original.
+
+A origem exata da diferença inicial de configuração entre processos não foi estabelecida de forma conclusiva.
+
+#### Resposta HTTP 503
+
+O Postman apresentou:
+
+- **HTTP:** 503 Service Unavailable
+- **Tempo de resposta:** 2,26 s
+- **Tamanho:** 196 B
+- **Testes automáticos:** 0/3 aprovados
+
+Resposta JSON:
+
+    {
+      "detail": "Serviço de base de dados indisponível"
+    }
+
+Os testes automáticos reprovaram porque esperavam uma lista de pedidos e HTTP 200.
+
+O comportamento confirmou que a API possuía tratamento básico para a falha de comunicação com a base de dados.
+
+#### Restauração da Configuração MySQL
+
+A porta original foi restaurada:
+
+    DB_PORT=3306
+
+O teste de ligação Python–MySQL voltou a apresentar:
+
+    Ligação ao MySQL estabelecida com sucesso.
+    Total de pedidos encontrados: 7
+
+Contudo, o endpoint HTTP continuou temporariamente a devolver HTTP 503.
+
+A investigação prosseguiu com a análise dos processos Uvicorn.
+
+#### Conflito na Porta HTTP 8000
+
+Durante o reinício do servidor, foi identificado:
+
+    [Errno 10048] error while attempting to bind
+    on address ('127.0.0.1', 8000)
+
+O erro indicava que a porta HTTP 8000 estava ocupada.
+
+Foram utilizados comandos PowerShell para investigar processos e ligações TCP:
+
+    netstat -ano | findstr :8000
+
+    Get-NetTCPConnection -LocalPort 8000 -State Listen
+
+    Get-CimInstance Win32_Process
+
+A porta 8000 encontrava-se associada ao PID 13080.
+
+Posteriormente, foi identificado o processo Python 31000, cujo processo pai era o PID 13080.
+
+#### Recuperação Temporária
+
+Para contornar o conflito, a API foi iniciada na porta HTTP 8001:
+
+    python -m uvicorn api.main:app --host 127.0.0.1 --port 8001
+
+O endpoint GET `/pedidos` voltou a funcionar.
+
+**Resultados:**
+
+- HTTP 200 OK
+- Tempo de resposta: 108 ms
+- Testes automáticos: 3/3 aprovados
+- Pedidos preservados: 7
+
+#### Resolução do Conflito
+
+Foi encerrado o processo Python residual identificado durante a investigação:
+
+    Stop-Process -Id 31000
+
+Após o encerramento, a porta 8000 deixou de apresentar ligações em estado LISTENING.
+
+#### Recuperação Definitiva
+
+A API foi iniciada novamente na porta original:
+
+    python -m uvicorn api.main:app --host 127.0.0.1 --port 8000
+
+O Postman confirmou:
+
+- **HTTP:** 200 OK
+- **Tempo de resposta:** 338 ms
+- **Tamanho:** 1014 B
+- **Testes automáticos:** 3/3 aprovados
+- **Pedidos preservados:** 7
+
+A instância temporária da porta 8001 foi encerrada após a recuperação.
+
+#### Análise das Causas
+
+Foram identificados dois problemas distintos:
+
+**1. Falha simulada de conectividade MySQL**
+
+A alteração da porta MySQL de 3306 para 3399 provocou a impossibilidade de estabelecer ligação, originando o erro MySQL 2003 e a resposta HTTP 503.
+
+**2. Conflito na porta HTTP 8000**
+
+Durante a recuperação, foi identificado um processo Python associado à execução anterior do servidor que impedia a utilização normal da porta 8000.
+
+Após o encerramento do processo identificado, a porta ficou disponível e a API pôde ser iniciada novamente no endereço original.
+
+A investigação demonstrou a importância de distinguir erros de conectividade à base de dados de problemas de gestão dos processos que executam a aplicação.
+
+#### Evidências
+
+- [INC-API-002_01_ESTADO_INICIAL_200.png](Evidencias/INC-API-002_01_ESTADO_INICIAL_200.png)
+- [INC-API-002_02_FALHA_MYSQL_503.png](Evidencias/INC-API-002_02_FALHA_MYSQL_503.png)
+- [INC-API-002_04_RECUPERACAO_FINAL_8000.png](Evidencias/INC-API-002_04_RECUPERACAO_FINAL_8000.png)
+
+#### Conclusão
+
+O incidente simulado foi resolvido e a recuperação da API foi validada na porta original 8000.
+
+A aplicação voltou a responder com HTTP 200 OK e os três testes automáticos foram aprovados.
+
+Os sete pedidos permaneceram armazenados no MySQL.
+
+**Relatório completo:** [INC-API-002.md](Relatorios/INC-API-002.md)
+
+**Estado final:** Resolvido e validado.
+
+---
+
+## Lições Aprendidas
+
+As investigações permitiram desenvolver conhecimentos práticos sobre:
+
+- Distinção entre erros de autenticação e conectividade.
+- Interpretação dos códigos MySQL 1045 e 2003.
+- Tratamento de indisponibilidade através de HTTP 503.
+- Importância das variáveis de ambiente.
+- Diagnóstico de processos Python.
+- Identificação de conflitos de portas TCP.
+- Recuperação de serviços através de validações sucessivas.
+- Preservação de dados durante uma investigação.
+- Utilização de testes automáticos para verificar a recuperação.
 
 ---
 
@@ -800,6 +681,9 @@ Os cenários ainda não executados serão desenvolvidos e investigados nas próx
     |   |-- AUTO_POST_CRIACAO_201_01.png
     |   |-- AUTO_POST_CRIACAO_201_02.png
     |   |-- AUTO_MYSQL_PEDIDO_ID_7.png
+    |   |-- INC-API-002_01_ESTADO_INICIAL_200.png
+    |   |-- INC-API-002_02_FALHA_MYSQL_503.png
+    |   |-- INC-API-002_04_RECUPERACAO_FINAL_8000.png
     |
     |-- Relatorios/
     |   |-- TESTE-GET-001.md
@@ -812,6 +696,7 @@ Os cenários ainda não executados serão desenvolvidos e investigados nas próx
     |   |-- TESTE-POST-008.md
     |   |-- TESTES-AUTOMATICOS-001.md
     |   |-- INC-API-001.md
+    |   |-- INC-API-002.md
     |
     |-- .env.example
     |-- .gitignore
@@ -822,7 +707,7 @@ O ficheiro `.env` verdadeiro e o ambiente virtual `.venv` permanecem locais e n�
 
 ---
 
-## Configuração do Ambiente
+## Configuração e Execução
 
 ### Requisitos
 
@@ -833,11 +718,11 @@ O ficheiro `.env` verdadeiro e o ambiente virtual `.venv` permanecem locais e n�
 
 ### 1. Criar o Ambiente Virtual
 
-Na pasta principal do projeto:
+Na pasta principal:
 
     python -m venv .venv
 
-Ativar no Windows PowerShell:
+Ativar no PowerShell:
 
     .\.venv\Scripts\Activate.ps1
 
@@ -851,14 +736,14 @@ No MySQL Workbench:
 
 1. Executar `database/01_criar_estrutura.sql`.
 2. Numa base inicialmente vazia, executar `database/02_inserir_dados.sql`.
-3. Confirmar os cinco pedidos fictícios iniciais.
+3. Confirmar os cinco pedidos iniciais.
 4. Configurar um utilizador com as permissões necessárias.
 
-Os pedidos de ID 6 e 7 foram criados posteriormente através da API.
+Os pedidos de ID 6 e 7 foram criados posteriormente através da API e não fazem parte do script de inserção inicial.
 
-### 4. Configurar o Ficheiro .env
+### 4. Configurar as Variáveis de Ambiente
 
-Criar o ficheiro `.env` com base em `.env.example`.
+Criar um ficheiro `.env` com base em `.env.example`.
 
 Exemplo:
 
@@ -870,17 +755,21 @@ Exemplo:
 
 Não publicar credenciais reais no GitHub.
 
-### 5. Testar a Ligação
+### 5. Validar a Ligação MySQL
+
+Executar:
 
     python -m api.testar_ligacao
 
-O número de pedidos apresentado dependerá dos registos existentes na base de dados.
+O total apresentado depende dos dados existentes na base de dados local.
 
 ### 6. Iniciar a API
 
-    python -m uvicorn api.main:app --reload
+Executar:
 
-A API ficará disponível em:
+    python -m uvicorn api.main:app --host 127.0.0.1 --port 8000
+
+A aplicação ficará disponível em:
 
 `http://127.0.0.1:8000`
 
@@ -896,7 +785,13 @@ Documentação interativa:
 - `GET http://127.0.0.1:8000/pedidos/999`
 - `POST http://127.0.0.1:8000/pedidos`
 
-Cada requisição POST válida e bem-sucedida cria um novo pedido.
+Cada POST válido e bem-sucedido cria um novo pedido.
+
+### Encerrar a Aplicação
+
+Pressionar `Ctrl + C` no terminal onde o Uvicorn está em execução.
+
+Evitar iniciar várias instâncias simultâneas na mesma porta.
 
 ---
 
@@ -904,89 +799,99 @@ Cada requisição POST válida e bem-sucedida cria um novo pedido.
 
 ### Atividades Concluídas
 
-- [x] Configuração do Postman.
-- [x] Teste HTTP GET numa API pública.
-- [x] Teste HTTP POST numa API pública.
-- [x] Criação da API Python com FastAPI.
-- [x] Configuração do ambiente virtual.
-- [x] Instalação das dependências.
-- [x] Implementação de GET `/health`.
-- [x] Validação do Health Check.
+- [x] Configuração do ambiente Python.
+- [x] Criação da API com FastAPI.
+- [x] Configuração do Uvicorn.
 - [x] Criação da base de dados MySQL.
 - [x] Criação da tabela `pedidos`.
-- [x] Implementação de restrições de integridade.
-- [x] Inserção de cinco pedidos fictícios.
-- [x] Validação dos registos através de SQL.
-- [x] Publicação dos scripts SQL.
-- [x] Configuração da integração Python–MySQL.
+- [x] Inserção dos dados fictícios iniciais.
+- [x] Integração Python–MySQL.
+- [x] Configuração das variáveis de ambiente.
 - [x] Criação de utilizador MySQL com permissões limitadas.
-- [x] Diagnóstico e resolução do incidente INC-API-001.
+- [x] Implementação de GET `/health`.
 - [x] Implementação de GET `/pedidos`.
 - [x] Implementação de GET `/pedidos/{pedido_id}`.
-- [x] Validação da resposta HTTP 404.
 - [x] Implementação de POST `/pedidos`.
-- [x] Validação da criação de pedido com HTTP 201.
-- [x] Confirmação da persistência no MySQL.
-- [x] Validação de quantidade inválida com HTTP 422.
-- [x] Confirmação de que o pedido inválido não foi armazenado.
-- [x] Documentação dos testes HTTP manuais.
-- [x] Implementação de testes automáticos no Postman.
-- [x] Aprovação das 18 verificações automáticas.
-- [x] Validação automática dos cenários HTTP 200, 201, 404 e 422.
-- [x] Confirmação da persistência do pedido criado no teste automático.
-- [x] Documentação dos testes em TESTES-AUTOMATICOS-001.md.
+- [x] Validação de HTTP 200.
+- [x] Validação de HTTP 201.
+- [x] Validação de HTTP 404.
+- [x] Validação de HTTP 422.
+- [x] Verificação da persistência de pedidos.
+- [x] Verificação da rejeição de dados inválidos.
+- [x] Documentação dos oito testes HTTP manuais.
+- [x] Implementação de 18 verificações automáticas.
+- [x] Validação das 18 verificações automáticas no Postman.
+- [x] Investigação e resolução do INC-API-001.
+- [x] Investigação e resolução do INC-API-002.
+- [x] Simulação controlada de HTTP 503.
+- [x] Diagnóstico do erro MySQL 2003.
+- [x] Diagnóstico do conflito da porta HTTP 8000.
+- [x] Recuperação da aplicação na porta original.
+- [x] Confirmação de HTTP 200 e 3/3 testes após a recuperação.
 - [x] Publicação dos relatórios e evidências no GitHub.
-- [x] Organização dos relatórios no Google Drive e no Notion.
+- [x] Organização da documentação no Google Drive e no Notion.
 
 ### Próximas Etapas
 
-- [ ] Testar outros campos obrigatórios e valores inválidos.
-- [ ] Implementar tratamento estruturado de erros e logs.
-- [ ] Investigar a indisponibilidade do MySQL e a resposta HTTP 503.
-- [ ] Validar a recuperação da API após a correção.
-- [ ] Documentar o novo incidente e as respetivas evidências.
 - [ ] Exportar e publicar a coleção Postman.
-- [ ] Preparar execuções repetíveis dos testes.
-- [ ] Rever as instruções de execução.
-- [ ] Realizar a revisão final do portfólio.
+- [ ] Rever a configuração dos testes para facilitar a sua reprodução.
+- [ ] Verificar os links e as evidências do repositório.
+- [ ] Realizar a revisão final do README e do código.
+- [ ] Concluir a apresentação do projeto no Notion.
 
 ### Melhorias Opcionais
 
-- [ ] Implementar autenticação e autorização na API.
-- [ ] Investigar cenários HTTP 401 e 403.
-- [ ] Criar uma estratégia automática de preparação e limpeza de dados de teste.
+- [ ] Testar outros campos obrigatórios e dados inválidos.
+- [ ] Implementar logs estruturados.
+- [ ] Implementar autenticação e autorização.
+- [ ] Simular cenários HTTP 401 e 403.
+- [ ] Criar preparação e limpeza automatizada de dados de teste.
 - [ ] Executar a coleção através do Postman Collection Runner.
 
 ---
 
-## Competências Trabalhadas
+## Competências Demonstradas
 
-- Testes manuais de APIs REST com Postman.
-- Testes automáticos em JavaScript no Postman.
-- Utilização de `pm.test()` e `pm.expect()`.
-- Interpretação de respostas HTTP e JSON.
-- Desenvolvimento de APIs com FastAPI.
-- Validação de dados com Pydantic.
-- Execução de aplicações Python com Uvicorn.
-- Criação e configuração de bases de dados MySQL.
-- Consultas e inserções SQL.
+### Desenvolvimento e Integração
+
+- Python e FastAPI.
+- Desenvolvimento de endpoints REST.
+- Validação com Pydantic.
 - Integração Python–MySQL.
-- Desenvolvimento de endpoints GET e POST.
-- Utilização de SQL parametrizado.
+- Consultas SQL parametrizadas.
 - Criação e confirmação de transações.
+
+### Testes e Qualidade
+
+- Testes HTTP manuais.
+- Testes automáticos com JavaScript no Postman.
+- Interpretação de respostas JSON.
 - Validação da persistência de dados.
 - Verificação da rejeição de dados inválidos.
-- Interpretação de códigos HTTP 200, 201, 404 e 422.
-- Diagnóstico de erros de autenticação MySQL.
-- Aplicação do princípio do menor privilégio.
-- Utilização de variáveis de ambiente.
-- Elaboração de relatórios técnicos.
-- Organização de código e evidências no GitHub.
+
+### Diagnóstico e Suporte Aplicacional
+
+- Interpretação de erros MySQL 1045 e 2003.
+- Análise de HTTP 404, 422 e 503.
+- Diagnóstico de variáveis de ambiente.
+- Investigação de problemas de conectividade.
+- Identificação de processos Python.
+- Análise de portas TCP através do PowerShell.
+- Recuperação de serviços Uvicorn.
+- Validação de correções através de testes.
+
+### Documentação Técnica
+
+- Elaboração de relatórios de incidentes.
+- Registo de resultados esperados e obtidos.
+- Organização de capturas de ecrã.
+- Documentação de procedimentos de diagnóstico.
+- Publicação de evidências técnicas no GitHub.
 
 ---
 
 ## Nota
 
-Este projeto utiliza exclusivamente dados fictícios e foi desenvolvido para fins educativos e de demonstração de competências técnicas em Suporte Aplicacional Júnior.
+Este projeto utiliza exclusivamente dados fictícios e foi desenvolvido para fins educativos e de demonstração de competências técnicas.
 
 Os resultados correspondem a testes realizados num ambiente local e controlado e não representam um sistema empresarial em produção.
