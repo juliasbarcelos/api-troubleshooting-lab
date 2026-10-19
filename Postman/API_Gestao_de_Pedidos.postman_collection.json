@@ -1,0 +1,229 @@
+{
+  "info": {
+    "_postman_id": "04993eb4-55d4-4568-88ed-ed598714ed6c",
+    "name": "API de Gestão de Pedidos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "59007024",
+    "_collection_link": "https://go.postman.co/collection/59007024-04993eb4-55d4-4568-88ed-ed598714ed6c?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "GET - Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"A API devolve HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"O status da API é ok\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.status).to.eql(\"ok\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/health",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET - Listar Pedidos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"A API devolve HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"A resposta é uma lista de pedidos\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"A lista contém pelo menos 6 pedidos\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.length).to.be.at.least(6);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/pedidos",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "pedidos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET - Consultar Pedido por ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"A API devolve HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"O pedido devolvido tem ID 2\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.id).to.eql(2);\r\n});\r\n\r\npm.test(\"O pedido contém os dados esperados\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    pm.expect(resposta.cliente).to.eql(\"Maria Silva\");\r\n    pm.expect(resposta.produto).to.eql(\"Monitor\");\r\n    pm.expect(resposta.quantidade).to.eql(2);\r\n    pm.expect(resposta.estado).to.eql(\"enviado\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/pedidos/2",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "pedidos",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET - Pedido Inexistente (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"A API devolve HTTP 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"A mensagem indica pedido inexistente\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    pm.expect(resposta.detail).to.eql(\r\n        \"Pedido não encontrado\"\r\n    );\r\n});\r\n\r\npm.test(\"A resposta é um objeto JSON\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    pm.expect(resposta).to.be.an(\"object\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/pedidos/999",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "pedidos",
+            "999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - Criar Pedido",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"A API devolve HTTP 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"O pedido recebe um ID válido\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    pm.expect(resposta.id).to.be.a(\"number\");\r\n    pm.expect(resposta.id).to.be.above(0);\r\n});\r\n\r\npm.test(\"A resposta confirma a criação do pedido\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    pm.expect(resposta.message).to.eql(\r\n        \"Pedido criado com sucesso\"\r\n    );\r\n});\r\n\r\npm.test(\"Os dados devolvidos correspondem aos enviados\", function () {\r\n    const resposta = pm.response.json();\r\n    const enviado = JSON.parse(pm.request.body.raw);\r\n\r\n    pm.expect(resposta.cliente).to.eql(enviado.cliente);\r\n    pm.expect(resposta.produto).to.eql(enviado.produto);\r\n    pm.expect(resposta.quantidade).to.eql(enviado.quantidade);\r\n    pm.expect(resposta.estado).to.eql(enviado.estado);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"cliente\": \"Cliente API\",\r\n  \"produto\": \"Webcam\",\r\n  \"quantidade\": 1,\r\n  \"estado\": \"pendente\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/pedidos",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "pedidos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - Quantidade Inválida (422)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"A API devolve HTTP 422\", function () {\r\n    pm.response.to.have.status(422);\r\n});\r\n\r\npm.test(\"O erro está relacionado com a quantidade\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    pm.expect(resposta.detail).to.be.an(\"array\");\r\n\r\n    const erroQuantidade = resposta.detail.find(\r\n        erro => erro.loc.includes(\"quantidade\")\r\n    );\r\n\r\n    pm.expect(erroQuantidade).to.exist;\r\n    pm.expect(erroQuantidade.type).to.eql(\"greater_than\");\r\n});\r\n\r\npm.test(\"O valor inválido é -2\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    const erroQuantidade = resposta.detail.find(\r\n        erro => erro.loc.includes(\"quantidade\")\r\n    );\r\n\r\n    pm.expect(erroQuantidade.input).to.eql(-2);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"cliente\": \"Cliente Teste Invalido\",\r\n  \"produto\": \"Webcam\",\r\n  \"quantidade\": -2,\r\n  \"estado\": \"pendente\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/pedidos",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "pedidos"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
